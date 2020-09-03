@@ -44,4 +44,29 @@ dependencies {
     androidTestImplementation 'androidx.test.ext:junit:1.1.1'
     androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
+
+    //exoplayer
+    implementation "com.google.android.exoplayer:exoplayer-core:${exoPlayerCore}"
+    implementation "com.google.android.exoplayer:exoplayer-dash:${exoPlayer}"
+    implementation "com.google.android.exoplayer:exoplayer-ui:${exoPlayer}"
+
+    //ffmpeg
+    implementation "com.writingminds:FFmpegAndroid:${FFmpeg}"
+    implementation "org.jcodec:jcodec-android:${jcodec}"
+
+    //seekbar
+    implementation "com.github.guilhe:seekbar-ranged-view:${seekbar}"
+
+    //textSize
+    implementation "com.intuit.sdp:sdp-android:${sdpSize}"
+
+    //GlideToast
+    implementation "com.github.imjeevandeshmukh:GlideToast:${GlideToast}"
+
+    //fresco
+//    implementation "com.facebook.fresco:fresco:${fresco}"
+    //fresco
+    implementation 'com.facebook.fresco:fresco:2.3.0'
+
+
 }
