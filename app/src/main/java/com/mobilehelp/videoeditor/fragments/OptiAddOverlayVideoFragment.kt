@@ -59,6 +59,7 @@ class OptiAddOverlayVideoFragment : BottomSheetDialogFragment(), OptiDialogueHel
     private var permissionList: ArrayList<String> = ArrayList()
     private lateinit var preferences: SharedPreferences
 
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,

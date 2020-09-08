@@ -59,6 +59,7 @@ public class OptiHgLVideoTrimmer extends FrameLayout {
     private TextView mTextSize;
     private TextView mTextTimeFrame;
     private TextView mTextTime;
+
     private OptiTimeLineView mTimeLineView;
 
     private OptiProgressBarView mVideoProgressIndicator;

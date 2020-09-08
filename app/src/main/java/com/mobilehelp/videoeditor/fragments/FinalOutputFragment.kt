@@ -1,3 +1,5 @@
+package com.mobilehelp.videoeditor.fragments
+
 /*
  *
  *  Created by Optisol on Aug 2019.
@@ -5,7 +7,6 @@
  *
  */
 
-package com.mobilehelp.videoeditor.fragments
 
 import android.Manifest
 import android.app.Activity
@@ -48,14 +49,17 @@ import com.mobilehelp.videoeditor.OptiTrimmerActivity
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.adapter.OptiVideoOptionsAdapter
+import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
+import com.otaliastudios.cameraview.VideoResult
 import java.io.File
+import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.CallBacks,
+class FinalOutputFragment : Fragment(), OptiBaseCreatorDialogFragment.CallBacks,
     OptiVideoOptionListener,
     OptiFFMpegCallback {
 
@@ -89,6 +93,36 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     private var mContext: Context? = null
     private var tvInfo: TextView? = null
 
+
+    private var videoView: VideoView? = null
+    private var alphaMovieView: AlphaMovieView? = null
+    private var done: ImageView? = null
+    private var close: ImageView? = null
+    private var overlayUri: Uri? = null
+    private var videoFileTwo: File? = null
+    private var filePath:String? = null
+    private var helper: OptiBaseCreatorDialogFragment.CallBacks? = null
+
+
+    private var videoResult: WeakReference<VideoResult>? = null
+
+
+
+
+
+    fun setVideoResult(
+        result: VideoResult?,
+        uri: Uri?,
+        videoFileTwo: File?
+    ) {
+        videoResult = result?.let { WeakReference(it) }
+        overlayUri = uri
+
+        filePath = overlayUri!!.path
+        this.videoFileTwo = videoFileTwo
+        val path = this.videoFileTwo!!.absolutePath
+    }
+
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
@@ -113,8 +147,9 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
 
 
-        preferences =
-            requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
+
+
+        preferences = requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
 
         rvVideoOptions = rootView.findViewById(R.id.rvVideoOptions)!!
         linearLayoutManager = LinearLayoutManager(requireActivity().applicationContext)
@@ -122,9 +157,6 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         rvVideoOptions.layoutManager = linearLayoutManager
 
         mContext = context
-        Temp.newInstance().apply {
-            setHelper(this@OptiMasterProcessorFragment)
-        }.show(requireFragmentManager(), "Temp")
 
         //add video editing options
         //videoOptions.add(OptiConstant.FLIRT)
@@ -145,6 +177,30 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             )
         rvVideoOptions.adapter = optiVideoOptionsAdapter
         optiVideoOptionsAdapter.notifyDataSetChanged()
+
+        val result: VideoResult? =
+            if (videoResult == null) null else videoResult!!.get()
+
+
+        if (result!!.file != null && videoFileTwo != null) {
+
+            //output file is generated and send to video processing
+            val outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+            OptiVideoEditor.with(requireContext())
+                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                .setFile(result.file)
+                .setFileTwo(videoFileTwo!!)
+                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setOutputPath(outputFile.path)
+                .setCallback(this)
+                .main()
+
+            helper?.showLoading(true)
+        } else {
+            OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+        }
 
 //        checkStoragePermission(OptiConstant.PERMISSION_STORAGE)
 
@@ -183,9 +239,9 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
 
         ibSelectVideo?.setOnClickListener {
-            Temp.newInstance().apply {
-                setHelper(this@OptiMasterProcessorFragment)
-            }.show(requireFragmentManager(), "Temp")
+            OptiAddOverlayVideoFragment.newInstance().apply {
+                setHelper(this@FinalOutputFragment)
+            }.show(requireFragmentManager(), "OptiAddOverlayVideoFragment")
         }
 
 
@@ -254,7 +310,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
         tvInfo?.setOnClickListener {
             OptiVideoOptionFragment.newInstance().apply {
-                setHelper(this@OptiMasterProcessorFragment)
+                setHelper(this@FinalOutputFragment)
             }.show(requireFragmentManager(), "OptiVideoOptionFragment")
         }
     }
@@ -296,7 +352,6 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         tvSave!!.visibility = View.VISIBLE
         masterVideoFile = file
         isLargeVideo = false
-        ibSelectVideo!!.isClickable = true
 
         val extension = OptiCommonMethods.getFileExtension(masterVideoFile!!.absolutePath)
 
@@ -307,16 +362,6 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             playbackPosition = 0
             currentWindow = 0
             initializePlayer()
-        }
-
-        if (masterVideoFile != null) {
-            val outputFile = createSaveVideoFile()
-            OptiCommonMethods.copyFile(masterVideoFile, outputFile)
-            Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
-                .show()
-            OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
-            tvSave!!.visibility = View.GONE
-            tvShare!!.visibility = View.VISIBLE
         }
     }
 
@@ -1001,7 +1046,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             OptiConstant.FLIRT -> {
                 masterVideoFile?.let { file ->
                     val filterFragment = OptiFilterFragment()
-                    filterFragment.setHelper(this@OptiMasterProcessorFragment)
+                    filterFragment.setHelper(this@FinalOutputFragment)
                     filterFragment.setFilePathFromSource(file)
                     showBottomSheetDialogFragment(filterFragment)
                 }
@@ -1017,7 +1062,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             OptiConstant.TRIM -> {
                 masterVideoFile?.let { file ->
                     val trimFragment = OptiTrimFragment()
-                    trimFragment.setHelper(this@OptiMasterProcessorFragment)
+                    trimFragment.setHelper(this@FinalOutputFragment)
                     trimFragment.setFilePathFromSource(file, exoPlayer?.duration!!)
                     showBottomSheetDialogFragment(trimFragment)
                 }
@@ -1039,7 +1084,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                     Log.v(tagName, "videoDuration: $duration")*/
 
                     OptiAddMusicFragment.newInstance().apply {
-                        setHelper(this@OptiMasterProcessorFragment)
+                        setHelper(this@FinalOutputFragment)
                         setFilePathFromSource(file)
                         setDuration(timeInMillis)
                     }.show(requireFragmentManager(), "OptiAddMusicFragment")
@@ -1060,7 +1105,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                     currentWindow = 0
 
                     OptiPlaybackSpeedDialogFragment.newInstance().apply {
-                        setHelper(this@OptiMasterProcessorFragment)
+                        setHelper(this@FinalOutputFragment)
                         setFilePathFromSource(file)
                     }.show(requireFragmentManager(), "OptiPlaybackSpeedDialogFragment")
                 }
@@ -1076,7 +1121,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             OptiConstant.TEXT -> {
                 masterVideoFile?.let { file ->
                     val addTextFragment = OptiAddTextFragment()
-                    addTextFragment.setHelper(this@OptiMasterProcessorFragment)
+                    addTextFragment.setHelper(this@FinalOutputFragment)
                     addTextFragment.setFilePathFromSource(file)
                     showBottomSheetDialogFragment(addTextFragment)
                 }
@@ -1092,7 +1137,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             OptiConstant.OBJECT -> {
                 masterVideoFile?.let { file ->
                     val addClipArtFragment = OptiAddClipArtFragment()
-                    addClipArtFragment.setHelper(this@OptiMasterProcessorFragment)
+                    addClipArtFragment.setHelper(this@FinalOutputFragment)
                     addClipArtFragment.setFilePathFromSource(file)
                     showBottomSheetDialogFragment(addClipArtFragment)
                 }
@@ -1107,14 +1152,14 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
             OptiConstant.MERGE -> {
                 OptiAddOverlayVideoFragment.newInstance().apply {
-                    setHelper(this@OptiMasterProcessorFragment)
+                    setHelper(this@FinalOutputFragment)
                 }.show(requireFragmentManager(), "OptiMergeFragment")
             }
 
             OptiConstant.TRANSITION -> {
                 masterVideoFile?.let { file ->
                     val transitionFragment = OptiTransitionFragment()
-                    transitionFragment.setHelper(this@OptiMasterProcessorFragment)
+                    transitionFragment.setHelper(this@FinalOutputFragment)
                     transitionFragment.setFilePathFromSource(file)
                     showBottomSheetDialogFragment(transitionFragment)
                 }
@@ -1131,7 +1176,6 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
     override fun onProgress(progress: String) {
         Log.v(tagName, "onProgress()")
-        ibSelectVideo!!.isClickable = false
         showLoading(true)
     }
 

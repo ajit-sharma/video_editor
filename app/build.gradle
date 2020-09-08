@@ -63,6 +63,9 @@ dependencies {
     //GlideToast
     implementation "com.github.imjeevandeshmukh:GlideToast:${GlideToast}"
 
+    // CameraView
+    implementation 'com.otaliastudios:cameraview:2.2.0'
+
     //fresco
 //    implementation "com.facebook.fresco:fresco:${fresco}"
     //fresco

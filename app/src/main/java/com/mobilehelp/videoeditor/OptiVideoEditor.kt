@@ -241,11 +241,13 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     "-i",
                     videoFileTwo!!.path,
                     "-filter_complex",
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay[out]",
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]",
+
                     "-map",
                     "[out]",
                     "-vsync",
                     "0",
+
                     "-c:v",
                     "libx264",
                     "-crf",
@@ -344,14 +346,20 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             OptiConstant.VIDEO_TRIM -> {
                 //Video trim - Need video file, start time, end time & output file
+//                ffmpeg -i 1.mp4 -f gdigrab -framerate 25 -video_size 300x200 -i title="MyWindow"
+//
+//                "[1]split[m][a];
+//                [a]format=yuv444p,geq='if(gt(lum(X,Y),0),255,0)',hue=s=0[al];
+//                [m][al]alphamerge[ovr];
+//                [0][ovr]overlay=(main_w-overlay_w):main_h-overlay_h[v]"
+//                -map "[v]" -c:v libx264 -r 25 out.mp4
+
                 cmd = arrayOf(
                     "-y",
                     "-i",
                     videoFile!!.path,
-                    "-ss",
-                    startTime,
-                    "-t",
-                    endTime,
+                    "-filter_complex",
+                    "chromakey=green",
                     "-c",
                     "copy",
                     outputFile.path
