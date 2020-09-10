@@ -98,24 +98,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         saveVideo = rootView.findViewById(R.id.save_overlay_view)
         camera!!.setLifecycleOwner(this)
 
-
-        val File_Name = "Demo.txt" //gives file name
-
-//        val Data = ",Uri.parse(\"android.resource://\" + packageName + \"/\" +\n" +
-//                "                R.raw.tiger)!" //define data
-
-        val Data:Uri = Uri.parse("android.resource://" + activity!!.packageName + "/" +
-                com.otaliastudios.cameraview.R.raw.tiger)
-
-        val fileobj: FileOutputStream =
-            requireActivity().openFileOutput(File_Name, Context.MODE_PRIVATE)
-        val ByteArray = Data.toByteArray() //Converts into bytes stream
-
-        fileobj.write(ByteArray) //writing to file
-
-        fileobj.close() //File closed
-
-
         camera!!.videoMaxDuration = 120 * 1000 // max 2mins
 
         camera!!.addCameraListener(object : CameraListener() {
