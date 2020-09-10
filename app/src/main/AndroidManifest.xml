@@ -4,6 +4,7 @@
     package="com.mobilehelp.videoeditor">
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
+    <uses-permission android:name="android.permission.RECORD_AUDIO" />
     <uses-permission
         android:name="android.permission.WRITE_EXTERNAL_STORAGE"
         tools:node="replace" />
@@ -35,10 +36,6 @@
         <!--        </activity>-->
 
         <!--OptiTrimmerActivity-->
-        <activity
-            android:name="com.mobilehelp.videoeditor.OptiTrimmerActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait"></activity>
 
         <!--FileProvider-->
         <provider

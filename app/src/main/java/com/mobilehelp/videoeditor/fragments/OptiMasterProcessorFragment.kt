@@ -83,6 +83,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     private lateinit var optiVideoOptionsAdapter: OptiVideoOptionsAdapter
     private var videoOptions: ArrayList<String> = ArrayList()
     private var orientationLand: Boolean = false
+    private var saveNShare: Boolean = false
     private var tvSave: ImageView? = null
     private var tvShare: ImageView? = null
     private var isLargeVideo: Boolean? = false
@@ -297,6 +298,9 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         masterVideoFile = file
         isLargeVideo = false
         ibSelectVideo!!.isClickable = true
+        tvSave!!.visibility = View.GONE
+        tvShare!!.visibility = View.VISIBLE
+
 
         val extension = OptiCommonMethods.getFileExtension(masterVideoFile!!.absolutePath)
 
@@ -309,15 +313,45 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             initializePlayer()
         }
 
-        if (masterVideoFile != null) {
-            val outputFile = createSaveVideoFile()
-            OptiCommonMethods.copyFile(masterVideoFile, outputFile)
-            Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
-                .show()
-            OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
-            tvSave!!.visibility = View.GONE
-            tvShare!!.visibility = View.VISIBLE
+        if (saveNShare) {
+
+
+            Log.v("Temp", "saveVideo" + saveNShare)
+
+            if (masterVideoFile != null) {
+
+                val screenshotUri = Uri.fromFile(masterVideoFile)
+
+                val file = File("File Path")
+                val apkURI = FileProvider.getUriForFile(
+                    requireActivity(), requireActivity().packageName.toString() + ".provider",
+                    masterVideoFile!!
+                )
+
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                sharingIntent.type = "video/*"
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
+                startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+                Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
+                    .show()
+            }
+
+        } else {
+
+            Log.v("onFileProcessed", "saveVideo" + saveNShare)
+            if (masterVideoFile != null) {
+                val outputFile = createSaveVideoFile()
+                OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
+                    .show()
+                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+
+            }
+
         }
+
+
     }
 
     override fun showLoading(isShow: Boolean) {
@@ -1014,118 +1048,13 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
             }
 
-            OptiConstant.TRIM -> {
-                masterVideoFile?.let { file ->
-                    val trimFragment = OptiTrimFragment()
-                    trimFragment.setHelper(this@OptiMasterProcessorFragment)
-                    trimFragment.setFilePathFromSource(file, exoPlayer?.duration!!)
-                    showBottomSheetDialogFragment(trimFragment)
-                }
 
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_crop)
-                    )
-                }
-            }
 
-            OptiConstant.MUSIC -> {
-                masterVideoFile?.let { file ->
-                    releasePlayer()
 
-                    val timeInMillis = OptiUtils.getVideoDuration(requireContext(), file)
-                    /*val duration = OptiCommonMethods.convertDurationInSec(timeInMillis)
-                    Log.v(tagName, "videoDuration: $duration")*/
 
-                    OptiAddMusicFragment.newInstance().apply {
-                        setHelper(this@OptiMasterProcessorFragment)
-                        setFilePathFromSource(file)
-                        setDuration(timeInMillis)
-                    }.show(requireFragmentManager(), "OptiAddMusicFragment")
-                }
 
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_music)
-                    )
-                }
-            }
+          
 
-            OptiConstant.PLAYBACK -> {
-                masterVideoFile?.let { file ->
-                    releasePlayer()
-                    playbackPosition = 0
-                    currentWindow = 0
-
-                    OptiPlaybackSpeedDialogFragment.newInstance().apply {
-                        setHelper(this@OptiMasterProcessorFragment)
-                        setFilePathFromSource(file)
-                    }.show(requireFragmentManager(), "OptiPlaybackSpeedDialogFragment")
-                }
-
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_speed)
-                    )
-                }
-            }
-
-            OptiConstant.TEXT -> {
-                masterVideoFile?.let { file ->
-                    val addTextFragment = OptiAddTextFragment()
-                    addTextFragment.setHelper(this@OptiMasterProcessorFragment)
-                    addTextFragment.setFilePathFromSource(file)
-                    showBottomSheetDialogFragment(addTextFragment)
-                }
-
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_text)
-                    )
-                }
-            }
-
-            OptiConstant.OBJECT -> {
-                masterVideoFile?.let { file ->
-                    val addClipArtFragment = OptiAddClipArtFragment()
-                    addClipArtFragment.setHelper(this@OptiMasterProcessorFragment)
-                    addClipArtFragment.setFilePathFromSource(file)
-                    showBottomSheetDialogFragment(addClipArtFragment)
-                }
-
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_sticker)
-                    )
-                }
-            }
-
-            OptiConstant.MERGE -> {
-                OptiAddOverlayVideoFragment.newInstance().apply {
-                    setHelper(this@OptiMasterProcessorFragment)
-                }.show(requireFragmentManager(), "OptiMergeFragment")
-            }
-
-            OptiConstant.TRANSITION -> {
-                masterVideoFile?.let { file ->
-                    val transitionFragment = OptiTransitionFragment()
-                    transitionFragment.setHelper(this@OptiMasterProcessorFragment)
-                    transitionFragment.setFilePathFromSource(file)
-                    showBottomSheetDialogFragment(transitionFragment)
-                }
-
-                if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_transition)
-                    )
-                }
-            }
         }
     }
 
@@ -1154,5 +1083,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     override fun onFinish() {
         Log.v(tagName, "onFinish()")
         showLoading(false)
+    }
+
+    fun onAddSaveNShareSubmit(saveOrShare: Boolean) {
+        saveNShare = saveOrShare
+        Log.v("onAddSaveNShareSubmit", "saveVideo" + saveOrShare)
+
     }
 }

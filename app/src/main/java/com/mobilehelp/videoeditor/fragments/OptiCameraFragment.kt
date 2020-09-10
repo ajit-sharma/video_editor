@@ -24,7 +24,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -115,14 +114,14 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
 
                 result?.let { file ->
 
-                    videoResult = result?.let { WeakReference(file) }
-                    OptiVideoPreviewFragment.newInstance().apply {
-                        setHelper(this@OptiCameraFragment)
-                        setVideoResult(
-                            file, videoUri, videoFileTwo
-                        )
-
-                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+//                    videoResult = result?.let { WeakReference(file) }
+//                    OptiVideoPreviewFragment.newInstance().apply {
+//                        setHelper(this@OptiCameraFragment)
+//                        setVideoResult(
+//                            file, videoUri, videoFileTwo, _xDeltaTemp, _yDeltaTemp
+//                        )
+//
+//                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
                 }
 
 
@@ -212,13 +211,13 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
 
         videoResult?.let { file ->
 
-            OptiVideoPreviewFragment.newInstance().apply {
-                setHelper(this@OptiCameraFragment)
-                setVideoResult(
-                    file, videoUri, videoFileTwo
-                )
-
-            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+//            OptiVideoPreviewFragment.newInstance().apply {
+//                setHelper(this@OptiCameraFragment)
+//                setVideoResult(
+//                    file, videoUri, videoFileTwo, _xDeltaTemp, _yDeltaTemp
+//                )
+//
+//            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
         }
 
 

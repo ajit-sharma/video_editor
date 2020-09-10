@@ -10,7 +10,6 @@ package com.mobilehelp.videoeditor
 import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.drawee.backends.pipeline.Fresco
-import com.mobilehelp.videoeditor.fragments.OptiCameraFragment
 import com.mobilehelp.videoeditor.fragments.OptiMasterProcessorFragment
 
 class MainActivity : AppCompatActivity() {

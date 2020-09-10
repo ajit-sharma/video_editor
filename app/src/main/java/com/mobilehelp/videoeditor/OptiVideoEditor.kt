@@ -26,7 +26,10 @@ class OptiVideoEditor private constructor(private val context: Context) {
     private var callback: OptiFFMpegCallback? = null
     private var outputFilePath = ""
     private var type: Int? = null
+    private var _xDelta: Int? = null
+    private var _yDelta: Int? = null
     private var position: String? = null
+    private var fixPosition:String? = null
 
     //for adding text
     private var font: File? = null
@@ -65,10 +68,12 @@ class OptiVideoEditor private constructor(private val context: Context) {
         var POSITION_CENTER_BOTTOM = "x=(main_w/2-text_w/2):y=main_h-(text_h*2)"
         var POSITION_CENTER_ALLIGN = "x=(w-text_w)/2: y=(h-text_h)/3"
 
+//        130----and Y axis is -919
+
         //for adding clipart
-        var BOTTOM_RIGHT = "overlay=W-w-5:H-h-5"
+        var BOTTOM_RIGHT = "overlay=W-w-130:H-h-(-919)"
         var TOP_RIGHT = "overlay=W-w-5:5"
-        var TOP_LEFT = "overlay=5:5"
+        var TOP_LEFT = "overlay=130:-919"
         var BOTTOM_LEFT = "overlay=5:H-h-5"
         var CENTER_ALLIGN = "overlay=(W-w)/2:(H-h)/2"
     }
@@ -85,6 +90,13 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
     fun setFileTwo(file: File): OptiVideoEditor {
         this.videoFileTwo = file
+        return this
+    }
+
+    fun setVideoPosition(x: Int, y: Int): OptiVideoEditor {
+        _xDelta = x
+        _yDelta = y
+        fixPosition = "overlay="+_xDelta +":" +_yDelta
         return this
     }
 
@@ -226,6 +238,8 @@ class OptiVideoEditor private constructor(private val context: Context) {
             }
 
             OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY -> {
+
+                Log.e("overlay","VIDEO_CLIP_VIDEO_OVERLAY" +fixPosition)
                 //Clipart overlay on video - Need video file, image path, position to apply & output file
 //                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path, "-filter_complex","[1:v]colorkey=0x00ff00:0.01:0.03[ckout];[0:v][ckout]overlay[out]", "-map", "[out]","-vsync", "0", "-c", "copy", "-c:v","-vcodec", "libx264", "-crf", "27",
 //                    "-q", "4", "-preset", "ultrafast",  outputFile.path)
@@ -241,7 +255,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     "-i",
                     videoFileTwo!!.path,
                     "-filter_complex",
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]",
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
 
                     "-map",
                     "[out]",

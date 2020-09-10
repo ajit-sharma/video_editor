@@ -11,4 +11,13 @@
     <dimen name="textLarge22">22sp</dimen>
     <dimen name="progress_video_line_height">2dp</dimen>
     <dimen name="frames_video_height">40dip</dimen>
+
+    <dimen name="image_button_padding">20dp</dimen>
+    <dimen name="change_bg_button_margin">20dp</dimen>
+    <dimen name="change_bg_button_text_size">18sp</dimen>
+
+    <dimen name="button_bg_radius">10dp</dimen>
+    <dimen name="button_bg_padding_horizontal">20dp</dimen>
+    <dimen name="button_bg_padding_vertical">15dp</dimen>
+
 </resources>
