@@ -26,6 +26,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiPlaybackSpeedListener
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.utils.OptiUtils
 import com.mobilehelp.videoeditor.interfaces.OptiDialogueHelper
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 
 class OptiPlaybackSpeedDialogFragment : BottomSheetDialogFragment(), OptiDialogueHelper,
@@ -160,7 +161,7 @@ class OptiPlaybackSpeedDialogFragment : BottomSheetDialogFragment(), OptiDialogu
             helper?.showLoading(true)
             dismiss()
         } else {
-            OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_speed))
+            longToast(getString(R.string.error_select_speed))
         }
     }
 }

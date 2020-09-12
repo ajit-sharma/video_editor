@@ -1,10 +1,3 @@
-/*
- *
- *  Created by Optisol on Aug 2019.
- *  Copyright © 2019 Optisol Business Solutions pvt ltd. All rights reserved.
- *
- */
-
 package com.mobilehelp.videoeditor.fragments
 
 import android.Manifest
@@ -29,7 +22,7 @@ import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import com.facebook.drawee.view.SimpleDraweeView
+//import com.facebook.drawee.view.SimpleDraweeView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
@@ -37,6 +30,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiDialogueHelper
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiUtils
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.util.*
 
@@ -47,8 +41,8 @@ class OptiAddOverlayVideoFragment : BottomSheetDialogFragment(), OptiDialogueHel
     private lateinit var rootView: View
     private lateinit var ivClose: ImageView
     private lateinit var ivDone: ImageView
-    private lateinit var ivVideoOne: SimpleDraweeView
-    private lateinit var ivVideoTwo: SimpleDraweeView
+    private lateinit var ivVideoOne: ImageView
+    private lateinit var ivVideoTwo: ImageView
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var bmThumbnailOne: Bitmap? = null
@@ -108,7 +102,8 @@ class OptiAddOverlayVideoFragment : BottomSheetDialogFragment(), OptiDialogueHel
 
                 helper?.showLoading(true)
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+//                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+                longToast(R.string.error_merge)
             }
         }
 

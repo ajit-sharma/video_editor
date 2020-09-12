@@ -1,7 +1,6 @@
 package com.mobilehelp.videoeditor.fragments
 
 
-import android.graphics.PixelFormat
 import android.net.Uri
 import android.os.Bundle
 import android.provider.MediaStore
@@ -27,8 +26,8 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
 
     private var videoView: VideoView? = null
     private var alphaMovieView: AlphaMovieView? = null
-    private var done: ImageView? = null
-    private var close: ImageView? = null
+    private lateinit var done: ImageView
+    private lateinit var close: ImageView
     private var overlayUri: Uri? = null
     private var videoFileTwo: File? = null
     private var filePath: String? = null
@@ -55,40 +54,28 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
         fun newInstance() = OptiVideoPreviewFragment()
     }
 
-
-//    OptiAddOverlayVideoFragment.newInstance().apply {
-//        setHelper(this@OptiMasterProcessorFragment)
-//    }.show(requireFragmentManager(), "OptiMergeFragment")
-
-
     private var tagName: String = OptiVideoPreviewFragment::class.java.simpleName
     private lateinit var rootView: View
     override fun permissionsBlocked() {
         TODO("Not yet implemented")
     }
 
-    override fun onCreate(savedInstanceState: Bundle?) {
-        super.onCreate(savedInstanceState)
-
-    }
     override fun onCreateView(
         inflater: LayoutInflater,
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
-
         rootView = inflater.inflate(R.layout.activity_video_preview, container, false)
         initView(rootView)
         return rootView
     }
 
-    private fun initView(rootView: View?) {
+    private fun initView(rootView: View) {
+        videoView = rootView.findViewById(R.id.video)
+        alphaMovieView = rootView.findViewById(R.id.alphaMovie)
 
-
-        videoView = rootView?.findViewById(R.id.video)
-        alphaMovieView = rootView?.findViewById(R.id.alphaMovie)
-
-        done = rootView?.findViewById(R.id.iv_done)
+        done = rootView.findViewById(R.id.iv_done)
+        close = rootView.findViewById(R.id.iv_close)
 
         videoView!!.setOnClickListener { playVideo() }
 
@@ -100,7 +87,13 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
             return
         }
 
+        done.setOnClickListener {
+            dialog!!.dismiss()
+        }
 
+        close.setOnClickListener {
+            dialog!!.dismiss()
+        }
 //        done?.setOnClickListener {
 //
 //            val outputFile = OptiUtils.createVideoFile(requireContext())
@@ -145,12 +138,8 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
             }
         }
         videoView!!.setOnCompletionListener { mp ->
-
             dialog!!.dismiss()
-
         }
-
-
     }
 
 
@@ -196,8 +185,6 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
 
 
     private fun setFilePath(uri: Uri?) {
-
-
         try {
             //  Log.e("selectedImage==>", "" + selectedImage)
             val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)

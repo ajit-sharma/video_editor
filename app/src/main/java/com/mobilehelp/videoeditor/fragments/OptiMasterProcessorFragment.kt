@@ -1,10 +1,3 @@
-/*
- *
- *  Created by Optisol on Aug 2019.
- *  Copyright © 2019 Optisol Business Solutions pvt ltd. All rights reserved.
- *
- */
-
 package com.mobilehelp.videoeditor.fragments
 
 import android.Manifest
@@ -32,8 +25,6 @@ import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
 import androidx.fragment.app.Fragment
-import androidx.recyclerview.widget.LinearLayoutManager
-import androidx.recyclerview.widget.RecyclerView
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.FFmpegLoadBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegNotSupportedException
@@ -47,10 +38,10 @@ import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mobilehelp.videoeditor.OptiTrimmerActivity
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
-import com.mobilehelp.videoeditor.adapter.OptiVideoOptionsAdapter
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -78,10 +69,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     private var pbLoading: ProgressBar? = null
     private var exoPlayer: SimpleExoPlayer? = null
     private var playWhenReady: Boolean? = false
-    private lateinit var linearLayoutManager: LinearLayoutManager
-    private lateinit var rvVideoOptions: RecyclerView
-    private lateinit var optiVideoOptionsAdapter: OptiVideoOptionsAdapter
-    private var videoOptions: ArrayList<String> = ArrayList()
+
+    //    private lateinit var linearLayoutManager: LinearLayoutManager
+//    private lateinit var rvVideoOptions: RecyclerView
+//    private lateinit var optiVideoOptionsAdapter: OptiVideoOptionsAdapter
+//    private var videoOptions: ArrayList<String> = ArrayList()
     private var orientationLand: Boolean = false
     private var tvSave: ImageView? = null
     private var tvShare: ImageView? = null
@@ -99,52 +91,53 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         return rootView
     }
 
-    private fun initView(rootView: View?) {
-        ePlayer = rootView?.findViewById(R.id.ePlayer)
-        tvSave = rootView?.findViewById(R.id.tvSave)
-        tvShare = rootView?.findViewById(R.id.tvShare)
-        pbLoading = rootView?.findViewById(R.id.pbLoading)
-        ibGallery = rootView?.findViewById(R.id.ibGallery)
-        ibCamera = rootView?.findViewById(R.id.ibCamera)
-        ibSelectVideo = rootView?.findViewById(R.id.ibSelectVideo)
-        progressBar = rootView?.findViewById(R.id.progressBar)!!
+    private fun initView(rootView: View) {
+        mContext = context
+        ePlayer = rootView.findViewById(R.id.ePlayer)
+        tvSave = rootView.findViewById(R.id.tvSave)
+        tvShare = rootView.findViewById(R.id.tvShare)
+        pbLoading = rootView.findViewById(R.id.pbLoading)
+        ibGallery = rootView.findViewById(R.id.ibGallery)
+        ibCamera = rootView.findViewById(R.id.ibCamera)
+        ibSelectVideo = rootView.findViewById(R.id.ibSelectVideo)
+        progressBar = rootView.findViewById(R.id.progressBar)
         tvVideoProcessing = rootView.findViewById(R.id.tvVideoProcessing)
         tvInfo = rootView.findViewById(R.id.tvInfo)
-
-
 
         preferences =
             requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
 
-        rvVideoOptions = rootView.findViewById(R.id.rvVideoOptions)!!
-        linearLayoutManager = LinearLayoutManager(requireActivity().applicationContext)
-        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
-        rvVideoOptions.layoutManager = linearLayoutManager
+//        rvVideoOptions = rootView.findViewById(R.id.rvVideoOptions)!!
+//        linearLayoutManager = LinearLayoutManager(requireActivity().applicationContext)
+//        linearLayoutManager.orientation = LinearLayoutManager.HORIZONTAL
+//        rvVideoOptions.layoutManager = linearLayoutManager
 
-        mContext = context
-        Temp.newInstance().apply {
-            setHelper(this@OptiMasterProcessorFragment)
-        }.show(requireFragmentManager(), "Temp")
+
+        //removed below code so at start half screen will not come to user
+//        Temp.newInstance().apply {
+//            setHelper(this@OptiMasterProcessorFragment)
+//        }.show(parentFragmentManager, "Temp")
+
 
         //add video editing options
         //videoOptions.add(OptiConstant.FLIRT)
-        videoOptions.add(OptiConstant.TRIM)
-        videoOptions.add(OptiConstant.MUSIC)
-        videoOptions.add(OptiConstant.PLAYBACK)
-        videoOptions.add(OptiConstant.TEXT)
-        videoOptions.add(OptiConstant.OBJECT)
-        videoOptions.add(OptiConstant.MERGE)
+//        videoOptions.add(OptiConstant.TRIM)
+//        videoOptions.add(OptiConstant.MUSIC)
+//        videoOptions.add(OptiConstant.PLAYBACK)
+//        videoOptions.add(OptiConstant.TEXT)
+//        videoOptions.add(OptiConstant.OBJECT)
+//        videoOptions.add(OptiConstant.MERGE)
         //videoOptions.add(OptiConstant.TRANSITION)
 
-        optiVideoOptionsAdapter =
-            OptiVideoOptionsAdapter(
-                videoOptions,
-                requireActivity().applicationContext,
-                this,
-                orientationLand
-            )
-        rvVideoOptions.adapter = optiVideoOptionsAdapter
-        optiVideoOptionsAdapter.notifyDataSetChanged()
+//        optiVideoOptionsAdapter =
+//            OptiVideoOptionsAdapter(
+//                videoOptions,
+//                requireActivity().applicationContext,
+//                this,
+//                orientationLand
+//            )
+//        rvVideoOptions.adapter = optiVideoOptionsAdapter
+//        optiVideoOptionsAdapter.notifyDataSetChanged()
 
 //        checkStoragePermission(OptiConstant.PERMISSION_STORAGE)
 
@@ -185,10 +178,8 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         ibSelectVideo?.setOnClickListener {
             Temp.newInstance().apply {
                 setHelper(this@OptiMasterProcessorFragment)
-            }.show(requireFragmentManager(), "Temp")
+            }.show(parentFragmentManager, "Temp")
         }
-
-
 
         tvSave?.setOnClickListener {
             AlertDialog.Builder(requireContext())
@@ -269,15 +260,15 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
             Log.v(tagName, "orientation: ORIENTATION_PORTRAIT")
             orientationLand = false
         }
-        optiVideoOptionsAdapter =
-            OptiVideoOptionsAdapter(
-                videoOptions,
-                requireActivity().applicationContext,
-                this,
-                orientationLand
-            )
-        rvVideoOptions.adapter = optiVideoOptionsAdapter
-        optiVideoOptionsAdapter.notifyDataSetChanged()
+//        optiVideoOptionsAdapter =
+//            OptiVideoOptionsAdapter(
+//                videoOptions,
+//                requireActivity().applicationContext,
+//                this,
+//                orientationLand
+//            )
+//        rvVideoOptions.adapter = optiVideoOptionsAdapter
+//        optiVideoOptionsAdapter.notifyDataSetChanged()
     }
 
     override fun onAudioFileProcessed(convertedAudioFile: File) {
@@ -1007,8 +998,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_filter)
                     )
                 }
@@ -1023,8 +1013,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_crop)
                     )
                 }
@@ -1046,8 +1035,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_music)
                     )
                 }
@@ -1066,8 +1054,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_speed)
                     )
                 }
@@ -1082,8 +1069,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_text)
                     )
                 }
@@ -1098,8 +1084,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_sticker)
                     )
                 }
@@ -1120,8 +1105,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
+                    longToast(
                         getString(R.string.error_transition)
                     )
                 }

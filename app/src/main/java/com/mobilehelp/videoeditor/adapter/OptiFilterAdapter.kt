@@ -1,10 +1,3 @@
-/*
- *
- *  Created by Optisol on Aug 2019.
- *  Copyright © 2019 Optisol Business Solutions pvt ltd. All rights reserved.
- *
- */
-
 package com.mobilehelp.videoeditor.adapter
 
 import android.content.Context
@@ -14,14 +7,19 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.facebook.drawee.view.SimpleDraweeView
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.interfaces.OptiFilterListener
 
-class OptiFilterAdapter(filterList: ArrayList<String>, bitmap: Bitmap, val context: Context, optiFilterListener: OptiFilterListener) :
+class OptiFilterAdapter(
+    filterList: ArrayList<String>,
+    bitmap: Bitmap,
+    val context: Context,
+    optiFilterListener: OptiFilterListener
+) :
     RecyclerView.Adapter<OptiFilterAdapter.MyPostViewHolder>() {
 
     private var tagName: String = OptiFilterAdapter::class.java.simpleName
@@ -32,7 +30,9 @@ class OptiFilterAdapter(filterList: ArrayList<String>, bitmap: Bitmap, val conte
     private var selectedFilter: String? = null
 
     override fun onCreateViewHolder(p0: ViewGroup, p1: Int): MyPostViewHolder {
-        return MyPostViewHolder(LayoutInflater.from(context).inflate(R.layout.opti_filter_view, p0, false))
+        return MyPostViewHolder(
+            LayoutInflater.from(context).inflate(R.layout.opti_filter_view, p0, false)
+        )
     }
 
     override fun onBindViewHolder(holder: MyPostViewHolder, position: Int) {
@@ -65,7 +65,7 @@ class OptiFilterAdapter(filterList: ArrayList<String>, bitmap: Bitmap, val conte
 
     class MyPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var tvFilter: TextView = itemView.findViewById(R.id.tvFilter)
-        var ivFilter: SimpleDraweeView = itemView.findViewById(R.id.ivFilter)
+        var ivFilter: ImageView = itemView.findViewById(R.id.ivFilter)
         var clFilter: ConstraintLayout = itemView.findViewById(R.id.clFilter)
     }
 

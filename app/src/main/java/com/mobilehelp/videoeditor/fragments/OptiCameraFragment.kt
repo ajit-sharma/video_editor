@@ -24,7 +24,6 @@ import android.widget.TextView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -42,7 +41,8 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFragment.CallBacks, OptiFFMpegCallback {
+class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFragment.CallBacks,
+    OptiFFMpegCallback {
 
     companion object {
         private val LOG = CameraLogger.create("DemoApp")
@@ -71,11 +71,11 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
 
     private var mContext: Context? = null
     private var camera: CameraView? = null
-    private var saveVideo: FloatingActionButton? = null
-    private var fabVideo: FloatingActionButton? = null
-    private var fabPreview: FloatingActionButton? = null
-    private var fabPicture: FloatingActionButton? = null
-    private var fabFront: FloatingActionButton? = null
+    private lateinit var saveVideo: FloatingActionButton
+    private lateinit var fabVideo: FloatingActionButton
+    private lateinit var fabPreview: FloatingActionButton
+    private lateinit var fabPicture: FloatingActionButton
+    private lateinit var fabFront: FloatingActionButton
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var videoUri: Uri? = null
@@ -93,12 +93,11 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
         return rootView
     }
 
-    private fun initView(rootView: View?) {
 
+    private fun initView(rootView: View) {
         CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
-
-        camera = rootView?.findViewById(R.id.camera)
-        saveVideo = rootView?.findViewById(R.id.save_overlay_view)
+        camera = rootView.findViewById(R.id.camera)
+        saveVideo = rootView.findViewById(R.id.save_overlay_view)
         camera!!.setLifecycleOwner(this)
 
         camera!!.videoMaxDuration = 120 * 1000 // max 2mins
@@ -113,7 +112,7 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
 
 
 
-                result?.let { file ->
+                result.let { file ->
 
                     videoResult = result?.let { WeakReference(file) }
                     OptiVideoPreviewFragment.newInstance().apply {
@@ -138,17 +137,16 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
             }
         })
 
-        fabVideo = rootView?.findViewById(R.id.fab_video)
-        fabPreview = rootView?.findViewById(R.id.fab_preview)
-        fabPicture = rootView?.findViewById(R.id.fab_picture)
-        fabFront = rootView?.findViewById(R.id.fab_front)
-        overlayVideo = rootView?.findViewById(R.id.watermark)!!
-
-        progressBar = rootView?.findViewById(R.id.progressBar)!!
+        fabVideo = rootView.findViewById(R.id.fab_video)
+        fabPreview = rootView.findViewById(R.id.fab_preview)
+        fabPicture = rootView.findViewById(R.id.fab_picture)
+        fabFront = rootView.findViewById(R.id.fab_front)
+        overlayVideo = rootView.findViewById(R.id.watermark)
+        progressBar = rootView.findViewById(R.id.progressBar)
         tvVideoProcessing = rootView.findViewById(R.id.tvVideoProcessing)
 
 
-        saveVideo!!.setOnClickListener{
+        saveVideo.setOnClickListener {
 
             val outputFile = OptiUtils.createVideoFile(requireContext())
             Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
@@ -167,12 +165,9 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
             helper?.showLoading(true)
 
         }
-        fabPicture!!.setOnClickListener {
-
+        fabPicture.setOnClickListener {
             openGallery()
-
         }
-
 //
 //        videoUri = Uri.parse(
 //            "android.resource://" + requireActivity().packageName + "/" +
@@ -472,7 +467,7 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
     private fun showBottomSheetDialogFragment(bottomSheetDialogFragment: BottomSheetDialogFragment) {
         val bundle = Bundle()
         bottomSheetDialogFragment.arguments = bundle
-        bottomSheetDialogFragment.show(requireFragmentManager(), bottomSheetDialogFragment.tag)
+        bottomSheetDialogFragment.show(parentFragmentManager, bottomSheetDialogFragment.tag)
     }
 
     override fun onDidNothing() {

@@ -25,7 +25,7 @@ import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.Toast
 import androidx.core.app.ActivityCompat
-import com.facebook.drawee.view.SimpleDraweeView
+//import com.facebook.drawee.view.SimpleDraweeView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
@@ -33,6 +33,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiDialogueHelper
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiUtils
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 
 class OptiMergeFragment : BottomSheetDialogFragment(), OptiDialogueHelper, OptiFFMpegCallback {
@@ -41,8 +42,8 @@ class OptiMergeFragment : BottomSheetDialogFragment(), OptiDialogueHelper, OptiF
     private lateinit var rootView: View
     private lateinit var ivClose: ImageView
     private lateinit var ivDone: ImageView
-    private lateinit var ivVideoOne: SimpleDraweeView
-    private lateinit var ivVideoTwo: SimpleDraweeView
+    private lateinit var ivVideoOne: ImageView
+    private lateinit var ivVideoTwo: ImageView
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var bmThumbnailOne: Bitmap? = null
@@ -92,7 +93,7 @@ class OptiMergeFragment : BottomSheetDialogFragment(), OptiDialogueHelper, OptiF
 
                 helper?.showLoading(true)
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+                longToast(getString(R.string.error_merge))
             }
         }
 

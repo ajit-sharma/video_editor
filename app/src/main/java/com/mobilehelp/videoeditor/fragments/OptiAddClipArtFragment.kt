@@ -28,6 +28,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiClipArtListener
 import com.mobilehelp.videoeditor.interfaces.OptiPositionListener
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.utils.OptiUtils
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 
 class OptiAddClipArtFragment : BottomSheetDialogFragment(), OptiClipArtListener, OptiPositionListener,
@@ -135,10 +136,12 @@ class OptiAddClipArtFragment : BottomSheetDialogFragment(), OptiClipArtListener,
                         }
                     }
                 } else {
-                    OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_sticker_pos))
+//                    OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_sticker_pos))
+                     longToast(R.string.error_select_sticker_pos)
                 }
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_sticker))
+//                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_sticker))
+                 longToast(R.string.error_select_sticker)
             }
         }
     }

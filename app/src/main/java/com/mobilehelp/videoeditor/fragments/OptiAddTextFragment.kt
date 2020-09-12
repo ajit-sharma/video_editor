@@ -20,13 +20,14 @@ import android.widget.Toast
 import androidx.recyclerview.widget.LinearLayoutManager
 import androidx.recyclerview.widget.RecyclerView
 import com.google.android.material.bottomsheet.BottomSheetDialogFragment
-import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.adapter.OptiPositionAdapter
-import com.mobilehelp.videoeditor.interfaces.OptiPositionListener
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
+import com.mobilehelp.videoeditor.interfaces.OptiPositionListener
+import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiUtils
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.util.*
 
@@ -47,7 +48,11 @@ class OptiAddTextFragment : BottomSheetDialogFragment(), OptiPositionListener, O
     private var positionStr: String? = null
     private var mContext: Context? = null
 
-    override fun onCreateView(inflater: LayoutInflater, container: ViewGroup?, savedInstanceState: Bundle?): View? {
+    override fun onCreateView(
+        inflater: LayoutInflater,
+        container: ViewGroup?,
+        savedInstanceState: Bundle?
+    ): View? {
         rootView = inflater.inflate(R.layout.opti_fragment_add_text, container, false)
         return rootView
     }
@@ -134,10 +139,12 @@ class OptiAddTextFragment : BottomSheetDialogFragment(), OptiPositionListener, O
 
                     helper?.showLoading(true)
                 } else {
-                    OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_add_text_pos))
+//                    OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_add_text_pos))
+                    longToast(R.string.error_add_text_pos)
                 }
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_add_text))
+//                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_add_text))
+                longToast(R.string.error_add_text)
             }
         }
 
@@ -148,7 +155,8 @@ class OptiAddTextFragment : BottomSheetDialogFragment(), OptiPositionListener, O
         positionList.add(OptiConstant.TOP_LEFT)
         positionList.add(OptiConstant.TOP_RIGHT)
 
-        optiPositionAdapter = OptiPositionAdapter(positionList, requireActivity().applicationContext, this)
+        optiPositionAdapter =
+            OptiPositionAdapter(positionList, requireActivity().applicationContext, this)
         rvPosition.adapter = optiPositionAdapter
         optiPositionAdapter.notifyDataSetChanged()
     }

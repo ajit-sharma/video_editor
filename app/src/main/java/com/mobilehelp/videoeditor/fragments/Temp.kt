@@ -31,6 +31,8 @@ import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiUtils
 import com.otaliastudios.cameraview.*
 import com.otaliastudios.cameraview.controls.Facing
+import org.jetbrains.anko.support.v4.longToast
+import org.jetbrains.anko.support.v4.toast
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -47,13 +49,13 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     private lateinit var preferences: SharedPreferences
 
 
-    private var camera: CameraView? = null
-    private var saveVideo: FloatingActionButton? = null
-    private var fabVideo: FloatingActionButton? = null
-    private var fabPreview: FloatingActionButton? = null
-    private var fabPicture: FloatingActionButton? = null
-    private var fabFront: FloatingActionButton? = null
-    private var fabSave: FloatingActionButton? = null
+    private lateinit var camera: CameraView
+    private lateinit var saveVideo: FloatingActionButton
+    private lateinit var fabVideo: FloatingActionButton
+    private lateinit var fabPreview: FloatingActionButton
+    private lateinit var fabPicture: FloatingActionButton
+    private lateinit var fabFront: FloatingActionButton
+    private lateinit var fabSave: FloatingActionButton
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var videoUri: Uri? = null
@@ -76,27 +78,20 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
     override fun onViewCreated(view: View, savedInstanceState: Bundle?) {
         super.onViewCreated(view, savedInstanceState)
-
-
-
         CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
+        camera = rootView.findViewById(R.id.camera)
+        saveVideo = rootView.findViewById(R.id.save_overlay_view)
+        camera.setLifecycleOwner(this)
 
-        camera = rootView?.findViewById(R.id.camera)
-        saveVideo = rootView?.findViewById(R.id.save_overlay_view)
-        camera!!.setLifecycleOwner(this)
+        camera.videoMaxDuration = 120 * 1000 // max 2mins
 
-        camera!!.videoMaxDuration = 120 * 1000 // max 2mins
-
-        camera!!.addCameraListener(object : CameraListener() {
+        camera.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {
 
             }
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
-
-
-
                 result?.let { file ->
 
                     backGroundVideoResult = file
@@ -107,7 +102,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                             file, videoUri, videoFileTwo
                         )
 
-                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+                    }.show(parentFragmentManager, "OptiVideoPreviewFragment")
                 }
 
 
@@ -123,12 +118,12 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
             }
         })
 
-        fabVideo = rootView?.findViewById(R.id.fab_video)
-        fabPreview = rootView?.findViewById(R.id.fab_preview)
-        fabPicture = rootView?.findViewById(R.id.fab_picture)
-        fabFront = rootView?.findViewById(R.id.fab_front)
-        fabSave = rootView?.findViewById(R.id.save_overlay_view)
-        overlayVideo = rootView?.findViewById(R.id.watermark)!!
+        fabVideo = rootView.findViewById(R.id.fab_video)
+        fabPreview = rootView.findViewById(R.id.fab_preview)
+        fabPicture = rootView.findViewById(R.id.fab_picture)
+        fabFront = rootView.findViewById(R.id.fab_front)
+        fabSave = rootView.findViewById(R.id.save_overlay_view)
+        overlayVideo = rootView.findViewById(R.id.watermark)
         overlayVideo.visibility = View.GONE
 
         mContext = context
@@ -164,46 +159,40 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 //            }
 //        }
 
-        fabVideo!!.setOnClickListener {
-
+        fabVideo.setOnClickListener {
             openCamera()
         }
 
-        fabPicture!!.setOnClickListener {
-
+        fabPicture.setOnClickListener {
             openGallery()
         }
 
-        fabPreview!!.setOnClickListener {
+        fabPreview.setOnClickListener {
 
             if (backGroundVideoResult != null && videoFileTwo != null) previewVideo(
                 backGroundVideoResult!!,
                 videoUri!!,
                 videoFileTwo
             )
-            else Toast.makeText(mContext, "No Video Create to display", Toast.LENGTH_LONG).show()
+            else longToast("No Video Create to display")
         }
 
-        fabFront!!.setOnClickListener {
-
-            if (camera!!.isTakingPicture || camera!!.isTakingVideo) return@setOnClickListener
-            when (camera!!.toggleFacing()) {
-                Facing.BACK -> fabFront!!.setImageResource(R.drawable.ic_camera_front_black_24dp)
-                Facing.FRONT -> fabFront!!.setImageResource(R.drawable.ic_camera_rear_black_24dp)
+        fabFront.setOnClickListener {
+            if (camera.isTakingPicture || camera.isTakingVideo) return@setOnClickListener
+            when (camera.toggleFacing()) {
+                Facing.BACK -> fabFront.setImageResource(R.drawable.ic_camera_front_black_24dp)
+                Facing.FRONT -> fabFront.setImageResource(R.drawable.ic_camera_rear_black_24dp)
             }
         }
 
-        fabSave!!.setOnClickListener {
+        fabSave.setOnClickListener {
 
             if (videoFileOne != null && videoFileTwo != null) {
                 AlertDialog.Builder(requireContext())
                     .setTitle(OptiConstant.APP_NAME)
                     .setMessage(getString(R.string.save_video))
                     .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
-
-
                         dismiss()
-
                         //output file is generated and send to video processing
                         val outputFile = OptiUtils.createVideoFile(requireContext())
                         Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
@@ -218,15 +207,13 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                             .main()
 
                         helper?.showLoading(true)
-                    }.setNegativeButton(R.string.cancel) { dialog, which -> }
+                    }.setNegativeButton(R.string.cancel) { dialog, which ->
+                        dismiss()
+                    }
                     .show()
-
-
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+                longToast(getString(R.string.error_merge))
             }
-
-
         }
     }
 
@@ -241,22 +228,19 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
     fun captureVideoSnapshot() {
         if (videoFileTwo !== null) {
-
             overlayVideo.stop()
             overlayVideo.setVideoFromUri(activity, videoUri)
             overlayVideo.start()
-            if (camera!!.isTakingVideo) {
-                camera!!.stopVideo()
-                fabVideo!!.setImageResource(R.drawable.ic_videocam_black_24dp)
+            if (camera.isTakingVideo) {
+                camera.stopVideo()
+                fabVideo.setImageResource(R.drawable.ic_videocam_black_24dp)
                 return
             }
             videoFileOne = OptiUtils.createVideoFile(requireContext())
-            camera!!.takeVideoSnapshot(videoFileOne!!)
-            fabVideo!!.setImageResource(R.drawable.ic_stop_black_24dp)
-
+            camera.takeVideoSnapshot(videoFileOne!!)
+            fabVideo.setImageResource(R.drawable.ic_stop_black_24dp)
         } else {
-
-            Toast.makeText(mContext, "Please Select Overlay Video", Toast.LENGTH_LONG).show()
+            longToast("Please Select Overlay Video")
         }
 
     }
@@ -273,20 +257,14 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                 setVideoResult(
                     file, videoUri, overlayVideoFile
                 )
-
-            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+            }.show(parentFragmentManager, "OptiVideoPreviewFragment")
         }
-
-
     }
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
         super.onActivityResult(requestCode, resultCode, data)
-
         if (resultCode == Activity.RESULT_CANCELED) return
-
         when (requestCode) {
-
             OptiConstant.VIDEO_MERGE_2 -> {
                 data?.let {
                     videoUri = it.data
@@ -357,10 +335,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                                 permission
                             ) == PackageManager.PERMISSION_GRANTED
                         ) {
-
                             captureVideoSnapshot()
-
-
                         }
                     }
                 }
@@ -369,15 +344,13 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
             }
 
             OptiConstant.VIDEO_MERGE_2 -> {
-
-
                 for (permission in permissions) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(
                             activity as Activity,
                             permission
                         )
                     ) {
-                        Toast.makeText(activity, "Permission Denied", Toast.LENGTH_SHORT).show()
+                        toast("Permission Denied")
                     } else {
                         if (ActivityCompat.checkSelfPermission(
                                 activity as Activity,
@@ -452,7 +425,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
     fun checkAllPermission(permission: Array<String>) {
         val blockedPermission = checkHasPermission(activity, permission)
-        if (blockedPermission != null && blockedPermission.size > 0) {
+        if (blockedPermission.size > 0) {
             val isBlocked = isPermissionBlocked(activity, blockedPermission)
             if (isBlocked) {
                 callPermissionSettings()
@@ -482,7 +455,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     }
 
     override fun onProgress(progress: String) {
-        Log.v(tagName, "onProgress()")
+        Log.v(tagName, "onProgress() ${progress}")
     }
 
     override fun onSuccess(convertedFile: File, type: String) {
@@ -505,7 +478,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         Log.v(tagName, "onFinish()")
         helper?.showLoading(false)
         showsDialog
-
     }
 }
 

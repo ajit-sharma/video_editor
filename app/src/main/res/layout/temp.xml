@@ -2,10 +2,8 @@
 <FrameLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     xmlns:custom="http://schemas.android.com/tools"
-    xmlns:tools="http://schemas.android.com/tools"
     android:layout_width="match_parent"
-    android:layout_height="match_parent"
-    >
+    android:layout_height="match_parent">
 
     <com.otaliastudios.cameraview.CameraView
         android:id="@+id/camera"
@@ -37,9 +35,7 @@
         android:layout_gravity="center"
         android:orientation="vertical"
         app:layout_constraintEnd_toEndOf="parent"
-        app:layout_constraintStart_toStartOf="parent"
-
-        >
+        app:layout_constraintStart_toStartOf="parent">
 
         <ProgressBar
             android:id="@+id/progressBar"
@@ -71,24 +67,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <!--        &lt;!&ndash; Watermark &ndash;&gt;-->
-        <!--        <com.ran3000.cameraviewdemo.freedrawing.AlphaMovieView-->
-        <!--            android:id="@+id/watermark"-->
-        <!--            android:layout_width="wrap_content"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:layout_gravity="bottom|end"-->
-        <!--            app:layout_drawOnPictureSnapshot="true"-->
-        <!--            app:layout_drawOnPreview="true"-->
-        <!--            app:layout_drawOnVideoSnapshot="true"-->
-        <!--            custom:accuracy="0.4"-->
-        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
-        <!--            app:layout_constraintEnd_toEndOf="parent"-->
-        <!--            android:layout_marginBottom="16dp"-->
-        <!--            android:layout_marginEnd="16dp"-->
-        <!--            custom:alphaColor="#00ff00"-->
-        <!--            />-->
-
         <TextView
             android:id="@+id/preview_text"
             android:layout_width="wrap_content"
@@ -96,11 +74,11 @@
             android:layout_marginBottom="16dp"
             android:text="Preview"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toTopOf="@+id/fab_preview"
-            app:layout_constraintEnd_toEndOf="@+id/fab_preview"
-            app:layout_constraintStart_toStartOf="@+id/fab_preview" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/fab_preview"
+            app:layout_constraintEnd_toEndOf="@id/fab_preview"
+            app:layout_constraintStart_toStartOf="@id/fab_preview" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/save_overlay_view"
@@ -109,10 +87,10 @@
             android:layout_marginStart="16dp"
             android:layout_marginTop="16dp"
             android:src="@drawable/ic_download_24"
-            app:fabSize="mini"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="@dimen/_12sdp"
+            android:textStyle="bold"
+            app:fabSize="mini"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
@@ -123,11 +101,11 @@
             android:layout_marginTop="16dp"
             android:text="Save"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="@dimen/_12sdp"
-            app:layout_constraintTop_toBottomOf="@+id/save_overlay_view"
-           app:layout_constraintEnd_toEndOf="@+id/save_overlay_view"
-            app:layout_constraintStart_toStartOf="@+id/save_overlay_view"/>
+            android:textStyle="bold"
+            app:layout_constraintEnd_toEndOf="@id/save_overlay_view"
+            app:layout_constraintStart_toStartOf="@id/save_overlay_view"
+            app:layout_constraintTop_toBottomOf="@id/save_overlay_view" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_preview"
@@ -153,7 +131,6 @@
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 
-
         <Space
             android:id="@+id/color_palette_negative_margin"
             android:layout_width="160dp"
@@ -168,11 +145,11 @@
             android:layout_marginBottom="16dp"
             android:text="Overlay"
             android:textColor="@color/black"
-            android:textStyle="bold"
             android:textSize="@dimen/_12sdp"
-            app:layout_constraintBottom_toTopOf="@+id/fab_picture"
-            app:layout_constraintEnd_toEndOf="@+id/fab_picture"
-            app:layout_constraintStart_toStartOf="@+id/fab_picture" />
+            android:textStyle="bold"
+            app:layout_constraintBottom_toTopOf="@id/fab_picture"
+            app:layout_constraintEnd_toEndOf="@id/fab_picture"
+            app:layout_constraintStart_toStartOf="@id/fab_picture" />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_picture"
@@ -194,16 +171,6 @@
             android:src="@drawable/ic_camera_front_black_24dp"
             app:fabSize="mini"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
-
-        <TextView
-            android:layout_width="wrap_content"
-            android:layout_height="0dp"
-            android:layout_marginTop="16dp"
-            android:text="Draw on the screen!"
-            android:textColor="@android:color/white"
-            app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
