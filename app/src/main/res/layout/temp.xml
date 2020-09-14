@@ -62,7 +62,8 @@
                 android:visibility="visible"
                 app:layout_drawOnPreview="true"
                 custom:accuracy="0.4"
-                custom:alphaColor="#00ff00" />
+                custom:alphaColor="#00ff00"
+                 />
 
 
         </RelativeLayout>

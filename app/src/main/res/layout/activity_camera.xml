@@ -27,7 +27,7 @@
             app:layout_drawOnPreview="true"
             app:layout_drawOnVideoSnapshot="true"
             custom:accuracy="0.4"
-            custom:alphaColor="#00ff00" />
+            custom:alphaColor="#3BBD1E" />
 
     </com.otaliastudios.cameraview.CameraView>
 
