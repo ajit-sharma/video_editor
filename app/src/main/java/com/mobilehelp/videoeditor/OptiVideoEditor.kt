@@ -223,16 +223,47 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             OptiConstant.VIDEO_CLIP_ART_OVERLAY -> {
                 //Clipart overlay on video - Need video file, image path, position to apply & output file
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-i",
+//                    imagePath!!,
+//                    "-filter_complex",
+//                    position!!,
+//                    "-codec:a",
+//                    "copy",
+//                    outputFile.path
+//                )
+
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-filter_complex",
+//                    "[0:v]colorkey=0x00ff00:0.4:0.2[ckout]",
+//
+//                    "-c:v",
+//                    "libx264",
+//                    "-preset",
+//                    "ultrafast",
+//                    outputFile.path
+//                )
+
                 cmd = arrayOf(
                     "-y",
                     "-i",
                     videoFile!!.path,
-                    "-i",
-                    imagePath!!,
-                    "-filter_complex",
-                    position!!,
-                    "-codec:a",
+                    "-vf",
+                    "chromakey=0x70de77:0.4:0.2",
+                    "-c",
                     "copy",
+                    "-c:v",
+                    "libx264",
+                    "-crf",
+                    "23",
+                    "-preset",
+                    "ultrafast",
                     outputFile.path
                 )
             }
@@ -283,7 +314,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     videoFileTwo!!.path,
                     "-filter_complex",
 //                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
-                     fixPosition!! + "[out]",
+                    fixPosition!! + "[out]",
                     "-map",
                     "[out]",
                     "-map", "1:a", "-c:a", "copy",
@@ -304,18 +335,31 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             OptiConstant.MERGE_VIDEO -> {
                 //Merge videos - Need two video file, approx video size & output file
-                cmd = arrayOf(
-                    "-y",
-                    "-i",
-                    videoFileTwo!!.path,
-                    "-filter_complex",
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]",
-                    "-map",
-                    "[v]",
-                    "-map",
-                    "[a]",
-                    outputFile.path
-                )
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-filter_complex",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]",
+//                    "-map",
+//                    "[v]",
+//                    "-map",
+//                    "[a]",
+//                    outputFile.path
+//                )
+
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-vf",
+//                    "chromakey=0x70de77:0.1:0.2",
+//                                       outputFile.path
+//                )
+
+
+//                ffmpeg -i input.mp4 -vf "" -c copy -c:v png output.mov
+
             }
 
             OptiConstant.VIDEO_PLAYBACK_SPEED -> {
@@ -326,7 +370,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                         "-i",
                         videoFile!!.path,
                         "-filter_complex",
-                        "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
+                        "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
                         "-map",
                         "[v]",
                         "-map",

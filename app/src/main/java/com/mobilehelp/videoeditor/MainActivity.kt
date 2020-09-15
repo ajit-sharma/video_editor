@@ -11,6 +11,7 @@ import android.os.Bundle
 import androidx.appcompat.app.AppCompatActivity
 import com.facebook.drawee.backends.pipeline.Fresco
 import com.mobilehelp.videoeditor.fragments.OptiMasterProcessorFragment
+import com.mobilehelp.videoeditor.fragments.SingleFragment
 
 class MainActivity : AppCompatActivity() {
 
@@ -20,6 +21,6 @@ class MainActivity : AppCompatActivity() {
         setContentView(R.layout.activity_main)
 
         val fragmentTransaction = supportFragmentManager.beginTransaction()
-        fragmentTransaction.replace(R.id.frame_container, OptiMasterProcessorFragment()).commit()
+        fragmentTransaction.replace(R.id.frame_container, SingleFragment()).commit()
     }
 }

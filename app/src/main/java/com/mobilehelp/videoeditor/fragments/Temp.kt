@@ -30,7 +30,6 @@ import com.mobilehelp.videoeditor.utils.OptiUtils
 import com.otaliastudios.cameraview.*
 import com.otaliastudios.cameraview.controls.Facing
 import java.io.File
-import java.io.FileOutputStream
 import java.lang.ref.WeakReference
 import java.util.*
 
@@ -41,8 +40,8 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     private var tagName: String = Temp::class.java.simpleName
     private var helper: OptiBaseCreatorDialogFragment.CallBacks? = null
     private var mContext: Context? = null
-    private lateinit var rootView: View
     private var permissionList: ArrayList<String> = ArrayList()
+    private lateinit var rootView: View
     private lateinit var preferences: SharedPreferences
     private var location = IntArray(2)
 
@@ -638,11 +637,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     ) {
 
 
-
         helper?.showLoading(true)
-
-
-
 
 
         var videoResult: WeakReference<VideoResult>? = null
