@@ -637,6 +637,14 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         y: Int
     ) {
 
+
+
+        helper?.showLoading(true)
+
+
+
+
+
         var videoResult: WeakReference<VideoResult>? = null
 
         videoResult = result?.let { WeakReference(it) }

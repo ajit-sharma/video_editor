@@ -274,7 +274,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
 //                    outputFile.path
 //                )
 
-
+//                "[1:v]colorkey=0x00ff00:0.1:0.2[ckout];[0:v][ckout]"
                 cmd = arrayOf(
                     "-y",
                     "-i",
@@ -283,10 +283,10 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     videoFileTwo!!.path,
                     "-filter_complex",
 //                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
-                    "[1:v]colorkey=0x00ff00:0.1:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
+                     fixPosition!! + "[out]",
                     "-map",
                     "[out]",
-                    "-map", "1:a", "-c:a","copy",
+                    "-map", "1:a", "-c:a", "copy",
                     "-vsync",
                     "0",
                     "-ab",
@@ -307,30 +307,13 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 cmd = arrayOf(
                     "-y",
                     "-i",
-                    videoFile!!.path,
-                    "-i",
                     videoFileTwo!!.path,
-                    "-strict",
-                    "experimental",
                     "-filter_complex",
-                    "[0:v]scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih), pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2,setsar=1:1[v0];[1:v] scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih), pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2,setsar=1:1[v1];[v0][0:a][v1][1:a] concat=n=2:v=1:a=1",
-                    "-ab",
-                    "48000",
-                    "-ac",
-                    "2",
-                    "-ar",
-                    "22050",
-                    "-s",
-                    "1920x1080",
-                    "-vcodec",
-                    "libx264",
-                    "-crf",
-                    "27",
-                    "-q",
-                    "4",
-                    "-preset",
-                    "ultrafast",
-
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]",
+                    "-map",
+                    "[v]",
+                    "-map",
+                    "[a]",
                     outputFile.path
                 )
             }
@@ -343,7 +326,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                         "-i",
                         videoFile!!.path,
                         "-filter_complex",
-                        ffmpegFS!!,
+                        "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
                         "-map",
                         "[v]",
                         "-map",
