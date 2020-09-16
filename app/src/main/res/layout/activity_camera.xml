@@ -27,7 +27,7 @@
             app:layout_drawOnPreview="true"
             app:layout_drawOnVideoSnapshot="true"
             custom:accuracy="0.4"
-            custom:alphaColor="#00ff00" />
+            custom:alphaColor="#3BBD1E" />
 
     </com.otaliastudios.cameraview.CameraView>
 
@@ -71,6 +71,24 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
+
+        <!--        &lt;!&ndash; Watermark &ndash;&gt;-->
+        <!--        <com.ran3000.cameraviewdemo.freedrawing.AlphaMovieView-->
+        <!--            android:id="@+id/watermark"-->
+        <!--            android:layout_width="wrap_content"-->
+        <!--            android:layout_height="wrap_content"-->
+        <!--            android:layout_gravity="bottom|end"-->
+        <!--            app:layout_drawOnPictureSnapshot="true"-->
+        <!--            app:layout_drawOnPreview="true"-->
+        <!--            app:layout_drawOnVideoSnapshot="true"-->
+        <!--            custom:accuracy="0.4"-->
+        <!--            app:layout_constraintBottom_toBottomOf="parent"-->
+        <!--            app:layout_constraintEnd_toEndOf="parent"-->
+        <!--            android:layout_marginBottom="16dp"-->
+        <!--            android:layout_marginEnd="16dp"-->
+        <!--            custom:alphaColor="#00ff00"-->
+        <!--            />-->
+
         <TextView
             android:id="@+id/preview_text"
             android:layout_width="wrap_content"
@@ -90,8 +108,9 @@
             android:layout_marginTop="16dp"
             android:src="@drawable/bg_play"
             app:fabSize="mini"
+            app:layout_constraintTop_toTopOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            />
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
             android:id="@+id/fab_preview"

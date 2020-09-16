@@ -1,5 +1,11 @@
-<?xml version="1.0" encoding="utf-8"?>
-<androidx.core.widget.NestedScrollView xmlns:android="http://schemas.android.com/apk/res/android"
+<?xml version="1.0" encoding="utf-8"?><!--
+  ~ /*
+  ~ * Created by Optisol on Aug 2019.
+  ~ * Copyright © 2019 Optisol Business Solutions pvt ltd. All rights reserved.
+  ~ * */
+  -->
+
+<androidx.constraintlayout.widget.ConstraintLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:app="http://schemas.android.com/apk/res-auto"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
@@ -8,7 +14,8 @@
 
     <androidx.constraintlayout.widget.ConstraintLayout
         android:layout_width="match_parent"
-        android:layout_height="wrap_content">
+        android:layout_height="match_parent"
+        >
 
         <include
             layout="@layout/opti_view_top_bar"
@@ -23,11 +30,11 @@
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_marginTop="?android:attr/actionBarSize"
-            android:layout_marginBottom="16dp"
-            app:layout_constraintBottom_toTopOf="@+id/ibSelectVideo"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toTopOf="parent" />
+            app:layout_constraintTop_toTopOf="parent"
+            app:layout_constraintBottom_toTopOf="@+id/ibSelectVideo"
+            android:layout_marginBottom="16dp"/>
 
         <TextView
             android:id="@+id/tvInfo"
@@ -83,6 +90,16 @@
 
         </LinearLayout>
 
+        <androidx.recyclerview.widget.RecyclerView
+            android:id="@+id/rvVideoOptions"
+            android:layout_width="match_parent"
+            android:layout_height="@dimen/_60sdp"
+            android:layout_marginTop="@dimen/_160sdp"
+            android:visibility="gone"
+            app:layout_constraintBottom_toTopOf="@+id/guideline"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
         <androidx.constraintlayout.widget.Guideline
             android:id="@+id/guideline"
             android:layout_width="wrap_content"
@@ -100,16 +117,16 @@
             android:padding="@dimen/_5sdp"
             android:src="@drawable/video_gallery_24"
             android:visibility="gone"
-            app:layout_constraintEnd_toStartOf="@id/ibCamera"
+            app:layout_constraintEnd_toStartOf="@+id/ibCamera"
             app:layout_constraintStart_toStartOf="parent"
-            app:layout_constraintTop_toBottomOf="@id/guideline" />
+            app:layout_constraintTop_toBottomOf="@+id/guideline" />
 
         <TextView
+
             android:id="@+id/ibSelectVideo"
             android:layout_width="0dp"
             android:layout_height="?android:attr/actionBarSize"
             android:layout_marginTop="@dimen/_10sdp"
-            android:layout_marginBottom="10dp"
             android:background="@color/white"
             android:contentDescription="@string/app_name"
             android:gravity="center"
@@ -118,7 +135,8 @@
             android:textColor="@color/black"
             app:layout_constraintBottom_toBottomOf="parent"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toStartOf="parent" />
+            app:layout_constraintStart_toStartOf="parent"
+            android:layout_marginBottom="10dp"/>
 
         <ImageButton
             android:id="@+id/ibCamera"
@@ -131,9 +149,9 @@
             android:src="@drawable/video_camera_24"
             android:visibility="gone"
             app:layout_constraintEnd_toEndOf="parent"
-            app:layout_constraintStart_toEndOf="@id/ibGallery"
-            app:layout_constraintTop_toBottomOf="@id/guideline" />
+            app:layout_constraintStart_toEndOf="@+id/ibGallery"
+            app:layout_constraintTop_toBottomOf="@+id/guideline" />
 
     </androidx.constraintlayout.widget.ConstraintLayout>
 
-</androidx.core.widget.NestedScrollView>
+</androidx.constraintlayout.widget.ConstraintLayout>

@@ -1,4 +1,5 @@
-<?xml version="1.0" encoding="utf-8"?><!--
+<?xml version="1.0" encoding="utf-8"?>
+<!--
   ~ /*
   ~ * Created by Optisol on Aug 2019.
   ~ * Copyright © 2019 Optisol Business Solutions pvt ltd. All rights reserved.
@@ -27,7 +28,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical|start"
             android:paddingStart="@dimen/_15sdp"
-            android:paddingEnd="@dimen/_15sdp" />
+            android:paddingEnd="@dimen/_15sdp"/>
 
         <androidx.appcompat.widget.AppCompatTextView
             android:layout_width="0dp"
@@ -35,7 +36,7 @@
             android:layout_weight="1"
             android:gravity="center_vertical|end"
             android:paddingStart="@dimen/_15sdp"
-            android:paddingEnd="@dimen/_15sdp" />
+            android:paddingEnd="@dimen/_15sdp"/>
     </LinearLayout>
 
 
@@ -65,7 +66,7 @@
                     android:layout_marginStart="@dimen/_10sdp"
                     android:layout_marginEnd="@dimen/_10sdp"
                     android:layout_marginBottom="@dimen/_10sdp"
-                    android:visibility="gone" />
+                    android:visibility="gone"/>
 
             </RelativeLayout>
 
@@ -76,17 +77,17 @@
                 android:background="@color/black"
                 app:controller_layout_id="@layout/exo_playback_control_view"
                 app:surface_type="surface_view"
-                app:use_controller="true" />
+                app:use_controller="true"/>
 
             <LinearLayout
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
-                android:layout_centerInParent="true"
                 android:orientation="vertical"
-                app:layout_constraintBottom_toTopOf="parent"
+                android:layout_centerInParent="true"
+                app:layout_constraintBottom_toTopOf="@+id/rvVideoOptions"
                 app:layout_constraintEnd_toEndOf="parent"
                 app:layout_constraintStart_toStartOf="parent"
-                app:layout_constraintTop_toBottomOf="parent">
+                app:layout_constraintTop_toBottomOf="@+id/exoPlayer">
 
                 <ProgressBar
                     android:id="@+id/progressBar"

@@ -41,7 +41,7 @@ class OptiVideoOptionsAdapter(videoOptions: ArrayList<String>, val context: Cont
             }
 
             OptiConstant.TRIM -> {
-                p0.ivOption.setImageResource(R.drawable.video_trimming_24)
+//                p0.ivOption.setImageResource(R.drawable.video_trimming_24)
             }
 
             OptiConstant.MUSIC -> {
@@ -57,7 +57,7 @@ class OptiVideoOptionsAdapter(videoOptions: ArrayList<String>, val context: Cont
             }
 
             OptiConstant.OBJECT -> {
-                p0.ivOption.setImageResource(R.drawable.sticker_24)
+//                p0.ivOption.setImageResource(R.drawable.sticker_24)
             }
 
             OptiConstant.MERGE -> {

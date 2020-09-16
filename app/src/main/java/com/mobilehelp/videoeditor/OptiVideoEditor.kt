@@ -7,12 +7,8 @@
 
 package com.mobilehelp.videoeditor
 
-//import com.github.hiteshsondhi88.libffmpeg.FFmpeg
-
 import android.content.Context
 import android.util.Log
-//import com.arthenica.mobileffmpeg.FFmpeg
-//import com.arthenica.mobileffmpeg.FFprobe
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
@@ -22,7 +18,6 @@ import com.mobilehelp.videoeditor.utils.OptiOutputType
 import java.io.File
 import java.io.IOException
 
-
 class OptiVideoEditor private constructor(private val context: Context) {
 
     private var tagName: String = OptiVideoEditor::class.java.simpleName
@@ -31,7 +26,10 @@ class OptiVideoEditor private constructor(private val context: Context) {
     private var callback: OptiFFMpegCallback? = null
     private var outputFilePath = ""
     private var type: Int? = null
+    private var _xDelta: Int? = null
+    private var _yDelta: Int? = null
     private var position: String? = null
+    private var fixPosition: String? = null
 
     //for adding text
     private var font: File? = null
@@ -76,10 +74,12 @@ class OptiVideoEditor private constructor(private val context: Context) {
         var POSITION_CENTER_BOTTOM = "x=(main_w/2-text_w/2):y=main_h-(text_h*2)"
         var POSITION_CENTER_ALLIGN = "x=(w-text_w)/2: y=(h-text_h)/3"
 
+//        130----and Y axis is -919
+
         //for adding clipart
-        var BOTTOM_RIGHT = "overlay=W-w-5:H-h-5"
+        var BOTTOM_RIGHT = "overlay=W-w-130:H-h-(-919)"
         var TOP_RIGHT = "overlay=W-w-5:5"
-        var TOP_LEFT = "overlay=5:5"
+        var TOP_LEFT = "overlay=130:-919"
         var BOTTOM_LEFT = "overlay=5:H-h-5"
         var CENTER_ALLIGN = "overlay=(W-w)/2:(H-h)/2"
     }
@@ -96,6 +96,13 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
     fun setFileTwo(file: File): OptiVideoEditor {
         this.videoFileTwo = file
+        return this
+    }
+
+    fun setVideoPosition(x: Int, y: Int): OptiVideoEditor {
+        _xDelta = x
+        _yDelta = y
+        fixPosition = "overlay=" + _xDelta + ":" + _yDelta
         return this
     }
 
@@ -224,21 +231,54 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             OptiConstant.VIDEO_CLIP_ART_OVERLAY -> {
                 //Clipart overlay on video - Need video file, image path, position to apply & output file
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-i",
+//                    imagePath!!,
+//                    "-filter_complex",
+//                    position!!,
+//                    "-codec:a",
+//                    "copy",
+//                    outputFile.path
+//                )
+
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-filter_complex",
+//                    "[0:v]colorkey=0x00ff00:0.4:0.2[ckout]",
+//
+//                    "-c:v",
+//                    "libx264",
+//                    "-preset",
+//                    "ultrafast",
+//                    outputFile.path
+//                )
+
                 cmd = arrayOf(
                     "-y",
                     "-i",
                     videoFile!!.path,
-                    "-i",
-                    imagePath!!,
-                    "-filter_complex",
-                    position!!,
-                    "-codec:a",
+                    "-vf",
+                    "chromakey=0x70de77:0.4:0.2",
+                    "-c",
                     "copy",
+                    "-c:v",
+                    "libx264",
+                    "-crf",
+                    "23",
+                    "-preset",
+                    "ultrafast",
                     outputFile.path
                 )
             }
 
             OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY -> {
+
+                Log.e("overlay", "VIDEO_CLIP_VIDEO_OVERLAY" + fixPosition)
                 //Clipart overlay on video - Need video file, image path, position to apply & output file
 //                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path, "-filter_complex","[1:v]colorkey=0x00ff00:0.01:0.03[ckout];[0:v][ckout]overlay[out]", "-map", "[out]","-vsync", "0", "-c", "copy", "-c:v","-vcodec", "libx264", "-crf", "27",
 //                    "-q", "4", "-preset", "ultrafast",  outputFile.path)
@@ -246,64 +286,88 @@ class OptiVideoEditor private constructor(private val context: Context) {
 //                -i master_video.mp4 -vf "movie=smaller_inner_video.mp4[inner];
 //                [in][inner] overlay=70:70 [out]" completed.mp4
 
-//                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path,"-filter_complex","[0]colorkey=0x00ff00:0.02:0.03[keyed];[1][keyed]overlay=10:10[keyed]", "-preset", "veryfast" ,  outputFile.path)
-                cmd = arrayOf(
-                    "-y",//
-                    "-i",//input
-                    videoFile!!.path,
-                    "-i", // input
-                    videoFileTwo!!.path,
-                    "-filter_complex", //filter
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
-                    "-map",//merge
-                    "[out]",// output
-                    "-vsync",// necessary to prevent same frame to process
-                    "0",// best vsync option
-                    "-map", // merge
-                    "0:a",// audio from 1st video
-                    "-c:v", // -c = codec v = video
-                    "libx264", // video codac name
-//                    "mpeg4", // video codac name
-                    "-crf", // control bitrat
-                    "23", // optimal
-                    "-preset", // option
-                    "ultrafast",// preset param
-//                    "-r", // bitrat
-//                    "30", // 30 FSP
-                    outputFile.path // output path
-                )
-            }
+//                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path,"-filter_complex","[1:v]colorkey=0x00ff00:0.4:0.2[keyed];[1][keyed]"+fixPosition!!+"[keyed]","-map", "[keyed]", "-c:v","libx264",  "-crf",
+//                    "23","-preset", "ultrafast" ,  outputFile.path)
 
-            OptiConstant.MERGE_VIDEO -> {
-                //Merge videos - Need two video file, approx video size & output file
+
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-filter_complex",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
+//
+//                    "-map",
+//                    "[out]",
+//
+//                    "-vsync",
+//                    "0",
+//                    "-r", "20",
+//                    "-b:v","1000k",
+//                    "-c:v",
+//                    "libx264",
+//                    "-preset",
+//                    "ultrafast",
+//                    outputFile.path
+//                )
+
+//                "[1:v]colorkey=0x00ff00:0.1:0.2[ckout];[0:v][ckout]"
                 cmd = arrayOf(
                     "-y",
                     "-i",
                     videoFile!!.path,
                     "-i",
                     videoFileTwo!!.path,
-                    "-strict",
-                    "experimental",
                     "-filter_complex",
-                    "[0:v]scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih), pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2,setsar=1:1[v0];[1:v] scale=iw*min(1920/iw\\,1080/ih):ih*min(1920/iw\\,1080/ih), pad=1920:1080:(1920-iw*min(1920/iw\\,1080/ih))/2:(1080-ih*min(1920/iw\\,1080/ih))/2,setsar=1:1[v1];[v0][0:a][v1][1:a] concat=n=2:v=1:a=1",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
+                    fixPosition!! + "[out]",
+                    "-map",
+                    "[out]",
+                    "-map", "1:a", "-c:a", "copy",
+                    "-vsync",
+                    "0",
                     "-ab",
                     "48000",
-                    "-ac",
-                    "2",
-                    "-ar",
-                    "22050",
-                    "-s",
-                    "1920x1080",
-                    "-vcodec",
+                    "-c:v",
                     "libx264",
                     "-crf",
-                    "27",
-                    "-q",
-                    "4",
+                    "23",
                     "-preset",
-                    "ultrafast",
+                    "veryfast",
                     outputFile.path
                 )
+
+            }
+
+            OptiConstant.MERGE_VIDEO -> {
+                //Merge videos - Need two video file, approx video size & output file
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-filter_complex",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]",
+//                    "-map",
+//                    "[v]",
+//                    "-map",
+//                    "[a]",
+//                    outputFile.path
+//                )
+
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-vf",
+//                    "chromakey=0x70de77:0.1:0.2",
+//                                       outputFile.path
+//                )
+
+
+//                ffmpeg -i input.mp4 -vf "" -c copy -c:v png output.mov
+
             }
 
             OptiConstant.VIDEO_PLAYBACK_SPEED -> {
@@ -314,7 +378,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                         "-i",
                         videoFile!!.path,
                         "-filter_complex",
-                        ffmpegFS!!,
+                        "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
                         "-map",
                         "[v]",
                         "-map",

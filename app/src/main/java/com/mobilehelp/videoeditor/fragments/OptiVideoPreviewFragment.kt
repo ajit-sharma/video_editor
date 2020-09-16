@@ -10,28 +10,29 @@ import android.view.View
 import android.view.ViewGroup
 import android.widget.ImageView
 import android.widget.MediaController
-import android.widget.Toast
 import android.widget.VideoView
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
-import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
-import com.mobilehelp.videoeditor.interfaces.OptiVideoHelper
 import com.otaliastudios.cameraview.VideoResult
 import java.io.File
 import java.lang.ref.WeakReference
 
 
-class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelper,
-    OptiFFMpegCallback {
+class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment() {
+
 
     private var videoView: VideoView? = null
     private var alphaMovieView: AlphaMovieView? = null
-    private lateinit var done: ImageView
-    private lateinit var close: ImageView
+    private var imgCancel: ImageView? = null
+    private var imgSave: ImageView? = null
+    private var imgShare: ImageView? = null
+    private var fabPlay: ImageView? = null
     private var overlayUri: Uri? = null
     private var videoFileTwo: File? = null
     private var filePath: String? = null
     private var helper: OptiBaseCreatorDialogFragment.CallBacks? = null
+    private var _xDelta = 0f
+    private var _yDelta = 0f
 
 
     private var videoResult: WeakReference<VideoResult>? = null
@@ -40,11 +41,14 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
     fun setVideoResult(
         result: VideoResult?,
         uri: Uri?,
-        videoFileTwo: File?
+        videoFileTwo: File?,
+        _xDeltaTemp: Float,
+        _yDeltaTemp: Float
     ) {
         videoResult = result?.let { WeakReference(it) }
         overlayUri = uri
-
+        _xDelta = _xDeltaTemp
+        _yDelta = _yDeltaTemp
         filePath = overlayUri!!.path
         this.videoFileTwo = videoFileTwo
         val path = this.videoFileTwo!!.absolutePath
@@ -54,10 +58,21 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
         fun newInstance() = OptiVideoPreviewFragment()
     }
 
+
+//    OptiAddOverlayVideoFragment.newInstance().apply {
+//        setHelper(this@OptiMasterProcessorFragment)
+//    }.show(requireFragmentManager(), "OptiMergeFragment")
+
+
     private var tagName: String = OptiVideoPreviewFragment::class.java.simpleName
     private lateinit var rootView: View
     override fun permissionsBlocked() {
         TODO("Not yet implemented")
+    }
+
+    override fun onCreate(savedInstanceState: Bundle?) {
+        super.onCreate(savedInstanceState)
+
     }
 
     override fun onCreateView(
@@ -65,54 +80,51 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
         container: ViewGroup?,
         savedInstanceState: Bundle?
     ): View? {
+
         rootView = inflater.inflate(R.layout.activity_video_preview, container, false)
         initView(rootView)
         return rootView
     }
 
-    private fun initView(rootView: View) {
-        videoView = rootView.findViewById(R.id.video)
-        alphaMovieView = rootView.findViewById(R.id.alphaMovie)
+    private fun initView(rootView: View?) {
 
-        done = rootView.findViewById(R.id.iv_done)
-        close = rootView.findViewById(R.id.iv_close)
 
-        videoView!!.setOnClickListener { playVideo() }
+        videoView = rootView?.findViewById(R.id.video)
+        alphaMovieView = rootView?.findViewById(R.id.alphaMovie)
+        fabPlay = rootView?.findViewById(R.id.play_video)
+        imgCancel = rootView?.findViewById(R.id.cancel_video)
+        imgSave = rootView?.findViewById(R.id.save_video)
+        imgShare = rootView?.findViewById(R.id.share_video)
+
+
+        fabPlay!!.setOnClickListener{
+
+            playVideo()
+        }
+
+        fabPlay!!.setOnClickListener{
+
+            playVideo()
+        }
+
+        fabPlay!!.setOnClickListener{
+
+            playVideo()
+        }
+
+
+
 
         val result: VideoResult? =
             if (videoResult == null) null else videoResult!!.get()
+
+
 
         if (result == null) {
             dialog!!.dismiss()
             return
         }
 
-        done.setOnClickListener {
-            dialog!!.dismiss()
-        }
-
-        close.setOnClickListener {
-            dialog!!.dismiss()
-        }
-//        done?.setOnClickListener {
-//
-//            val outputFile = OptiUtils.createVideoFile(requireContext())
-//            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-//
-//
-//            OptiVideoEditor.with(requireContext())
-//                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-//                .setFile(result.file)
-//                .setFileTwo(videoFileTwo!!)
-//                .setPosition(OptiVideoEditor.TOP_LEFT)
-//                .setOutputPath(outputFile.path)
-//                .setCallback(this)
-//                .main()
-//
-//            helper?.showLoading(true)
-////
-//
-//        }
 
 
         val controller = MediaController(activity)
@@ -121,6 +133,15 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
         videoView!!.setMediaController(controller)
         videoView!!.setVideoURI(Uri.fromFile(result.file))
         alphaMovieView!!.setVideoFromUri(requireContext(), overlayUri)
+
+        alphaMovieView!!.animate()
+            .x(_xDelta)
+            .y(_yDelta)
+            .setDuration(0)
+            .start()
+
+        Log.e("OptiVideo", "PreviewFragment" + "-------" + _xDelta + "-----" + _yDelta)
+
         videoView!!.setOnPreparedListener { mp ->
             val lp = videoView!!.layoutParams
             val videoWidth = mp.videoWidth.toFloat()
@@ -138,71 +159,21 @@ class OptiVideoPreviewFragment : OptiBaseCreatorDialogFragment(), OptiVideoHelpe
             }
         }
         videoView!!.setOnCompletionListener { mp ->
-            dialog!!.dismiss()
+
+            fabPlay!!.visibility = View.VISIBLE
+//            dialog!!.dismiss()
+
         }
+
+
     }
 
 
     fun playVideo() {
         if (videoView!!.isPlaying) return
+        fabPlay!!.visibility = View.GONE
         videoView!!.start()
         alphaMovieView!!.start()
-    }
-
-    override fun setHelper(helper: CallBacks) {
-        this.helper = helper
-    }
-
-    override fun setFilePathFromSource(backgroundUri: Uri, overlayUri: Uri) {
-        TODO("Not yet implemented")
-    }
-
-    override fun onProgress(progress: String) {
-        Log.v(tagName, "onProgress()")
-    }
-
-    override fun onSuccess(convertedFile: File, type: String) {
-        Log.v(tagName, "onSuccess()")
-        helper?.showLoading(false)
-        helper?.onFileProcessed(convertedFile)
-    }
-
-    override fun onFailure(error: Exception) {
-        Log.v(tagName, "onFailure() ${error.localizedMessage}")
-        Toast.makeText(activity, "Video processing failed", Toast.LENGTH_LONG).show()
-        helper?.showLoading(false)
-    }
-
-    override fun onNotAvailable(error: Exception) {
-        Log.v(tagName, "onNotAvailable() ${error.localizedMessage}")
-    }
-
-    override fun onFinish() {
-        Log.v(tagName, "onFinish()")
-        helper?.showLoading(false)
-        showsDialog
-    }
-
-
-    private fun setFilePath(uri: Uri?) {
-        try {
-            //  Log.e("selectedImage==>", "" + selectedImage)
-            val filePathColumn = arrayOf(MediaStore.MediaColumns.DATA)
-            val cursor = requireContext().contentResolver
-                .query(uri!!, filePathColumn, null, null, null)
-            if (cursor != null) {
-                cursor.moveToFirst()
-                val columnIndex = cursor
-                    .getColumnIndex(filePathColumn[0])
-                val filePath = cursor.getString(columnIndex)
-                cursor.close()
-                videoFileTwo = File(filePath)
-                Log.v(tagName, "videoFileOne: " + videoFileTwo!!.absolutePath)
-
-            }
-        } catch (e: Exception) {
-            Log.e(tagName, "Exception: ${e.localizedMessage}")
-        }
     }
 
 
