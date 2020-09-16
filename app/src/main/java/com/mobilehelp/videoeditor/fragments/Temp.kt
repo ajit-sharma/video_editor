@@ -2,7 +2,6 @@ package com.mobilehelp.videoeditor.fragments
 
 import android.Manifest
 import android.app.Activity
-import android.app.AlertDialog
 import android.content.Context
 import android.content.Intent
 import android.content.SharedPreferences
@@ -11,16 +10,18 @@ import android.media.MediaScannerConnection
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.SystemClock
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.Chronometer
 import android.widget.Toast
+import androidx.appcompat.app.AppCompatDialogFragment
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
-import com.google.android.material.bottomsheet.BottomSheetDialogFragment
 import com.google.android.material.floatingactionbutton.FloatingActionButton
 import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
@@ -37,7 +38,7 @@ import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
 
-class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
+class Temp : AppCompatDialogFragment(), OptiDialogueHelper,
     OptiFFMpegCallback {
 
 
@@ -56,6 +57,8 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     private lateinit var fabPicture: FloatingActionButton
     private lateinit var fabFront: FloatingActionButton
     private lateinit var fabSave: FloatingActionButton
+
+    private lateinit var recordingTime: Chronometer
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var videoUri: Uri? = null
@@ -63,8 +66,18 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     private var videoResult: WeakReference<VideoResult>? = null
     private var backGroundVideoResult: VideoResult? = null
 
+
     companion object {
-        fun newInstance() = Temp()
+        var abc: Temp = Temp()
+
+        fun newInstance(): Temp {
+            abc = Temp()
+            return abc
+        }
+
+        fun getInstance(): Temp {
+            return abc
+        }
     }
 
     override fun onCreateView(
@@ -92,6 +105,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
+                doStoreVideo()
                 result?.let { file ->
 
                     backGroundVideoResult = file
@@ -101,7 +115,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                         setVideoResult(
                             file, videoUri, videoFileTwo
                         )
-
                     }.show(parentFragmentManager, "OptiVideoPreviewFragment")
                 }
 
@@ -123,6 +136,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         fabPicture = rootView.findViewById(R.id.fab_picture)
         fabFront = rootView.findViewById(R.id.fab_front)
         fabSave = rootView.findViewById(R.id.save_overlay_view)
+        recordingTime = rootView.findViewById(R.id.recordingTime)
         overlayVideo = rootView.findViewById(R.id.watermark)
         overlayVideo.visibility = View.GONE
 
@@ -178,6 +192,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         }
 
         fabFront.setOnClickListener {
+//            doRemoveChroma()
             if (camera.isTakingPicture || camera.isTakingVideo) return@setOnClickListener
             when (camera.toggleFacing()) {
                 Facing.BACK -> fabFront.setImageResource(R.drawable.ic_camera_front_black_24dp)
@@ -186,34 +201,65 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         }
 
         fabSave.setOnClickListener {
+            doStoreVideo()
+        }
+    }
 
-            if (videoFileOne != null && videoFileTwo != null) {
-                AlertDialog.Builder(requireContext())
-                    .setTitle(OptiConstant.APP_NAME)
-                    .setMessage(getString(R.string.save_video))
-                    .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
-                        dismiss()
-                        //output file is generated and send to video processing
-                        val outputFile = OptiUtils.createVideoFile(requireContext())
-                        Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+//    fun doRemoveChroma() {
+//        videoUri?.let {
+//            val videoFile = File(it.path)
+//            val length = OptiUtils.getVideoDuration(requireContext(), it)
+//
+//            val tempOverlayFile = OptiUtils.createVideoFile(requireContext())
+//            OptiUtils.copyFile(videoFile, tempOverlayFile)
+//            Log.v(tagName, "tempOverlayFile: ${tempOverlayFile.absolutePath}")
+//
+//            //output file is generated and send to video processing
+//            val outputFile = OptiUtils.createVideoFile(requireContext())
+//            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+//
+//            OptiVideoEditor.with(requireContext())
+//                .setType(OptiConstant.VIDEO_REMOVE_CHROMA)
+//                .setFile(tempOverlayFile)
+//                .setPosition(OptiVideoEditor.TOP_LEFT)
+//                .setOutputPath(outputFile.path)
+//                .setCallback(this)
+//                .main()
+//
+////            helper?.showLoading(true)
+//        }
+//
+//
+//    }
 
-                        OptiVideoEditor.with(requireContext())
-                            .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-                            .setFile(videoFileOne!!)
-                            .setFileTwo(videoFileTwo!!)
-                            .setPosition(OptiVideoEditor.TOP_LEFT)
-                            .setOutputPath(outputFile.path)
-                            .setCallback(this)
-                            .main()
+    fun doStoreVideo() {
 
-                        helper?.showLoading(true)
-                    }.setNegativeButton(R.string.cancel) { dialog, which ->
-                        dismiss()
-                    }
-                    .show()
-            } else {
-                longToast(getString(R.string.error_merge))
-            }
+        if (videoFileOne != null && videoFileTwo != null) {
+//            AlertDialog.Builder(requireContext())
+//                .setTitle(OptiConstant.APP_NAME)
+//                .setMessage(getString(R.string.save_video))
+//                .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
+//                    dismiss()
+            //output file is generated and send to video processing
+            val outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+            OptiVideoEditor.with(requireContext())
+                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                .setFile(videoFileOne!!)
+                .setFileTwo(videoFileTwo!!)
+                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setOutputPath(outputFile.path)
+                .setCallback(this)
+                .main()
+
+            helper?.showLoading(true)
+//                }.setNegativeButton(R.string.cancel) { dialog, which ->
+//                    dismiss()
+//                }
+//                .show()
+        } else {
+            longToast(getString(R.string.error_merge))
         }
     }
 
@@ -228,12 +274,17 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
     fun captureVideoSnapshot() {
         if (videoFileTwo !== null) {
+            recordingTime.setBase(SystemClock.elapsedRealtime());
+            recordingTime.start()
+
             overlayVideo.stop()
             overlayVideo.setVideoFromUri(activity, videoUri)
+
             overlayVideo.start()
             if (camera.isTakingVideo) {
                 camera.stopVideo()
                 fabVideo.setImageResource(R.drawable.ic_videocam_black_24dp)
+                recordingTime.stop()
                 return
             }
             videoFileOne = OptiUtils.createVideoFile(requireContext())
@@ -250,9 +301,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         videoUri: Uri,
         overlayVideoFile: File?
     ) {
-
         videoResult?.let { file ->
-
             OptiVideoPreviewFragment.newInstance().apply {
                 setVideoResult(
                     file, videoUri, overlayVideoFile
@@ -371,8 +420,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
                     }
                 }
                 return
-
-
             }
         }
     }
@@ -477,7 +524,8 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     override fun onFinish() {
         Log.v(tagName, "onFinish()")
         helper?.showLoading(false)
-        showsDialog
+        dismiss()
+//        showsDialog
     }
 }
 

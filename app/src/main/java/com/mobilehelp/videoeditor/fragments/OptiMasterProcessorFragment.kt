@@ -10,10 +10,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
+import android.os.*
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -80,6 +77,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     private var isLargeVideo: Boolean? = false
     private var mContext: Context? = null
     private var tvInfo: TextView? = null
+    private lateinit var meter: Chronometer
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -102,6 +100,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         ibSelectVideo = rootView.findViewById(R.id.ibSelectVideo)
         progressBar = rootView.findViewById(R.id.progressBar)
         tvVideoProcessing = rootView.findViewById(R.id.tvVideoProcessing)
+        meter = rootView.findViewById(R.id.chronometer)
         tvInfo = rootView.findViewById(R.id.tvInfo)
 
         preferences =
@@ -176,7 +175,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
 
         ibSelectVideo?.setOnClickListener {
-            Temp.newInstance().apply {
+            Temp.getInstance().apply {
                 setHelper(this@OptiMasterProcessorFragment)
             }.show(parentFragmentManager, "Temp")
         }
@@ -315,10 +314,13 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         if (isShow) {
             progressBar.visibility = View.VISIBLE
             tvVideoProcessing!!.visibility = View.VISIBLE
-            setProgressValue()
+//            setProgressValue()
+            meter.setBase(SystemClock.elapsedRealtime())
+            meter.start()
         } else {
             progressBar.visibility = View.INVISIBLE
             tvVideoProcessing!!.visibility = View.INVISIBLE
+            meter.stop()
         }
     }
 
@@ -369,19 +371,19 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         }
     }
 
-    private fun checkStoragePermission(permission: Array<String>) {
-        val blockedPermission = checkHasPermission(activity, permission)
-        if (blockedPermission != null && blockedPermission.size > 0) {
-            val isBlocked = isPermissionBlocked(activity, blockedPermission)
-            if (isBlocked) {
-                callPermissionSettings()
-            } else {
-                requestPermissions(permission, OptiConstant.ADD_ITEMS_IN_STORAGE)
-            }
-        } else {
-            itemStorageAction()
-        }
-    }
+//    private fun checkStoragePermission(permission: Array<String>) {
+//        val blockedPermission = checkHasPermission(activity, permission)
+//        if (blockedPermission != null && blockedPermission.size > 0) {
+//            val isBlocked = isPermissionBlocked(activity, blockedPermission)
+//            if (isBlocked) {
+//                callPermissionSettings()
+//            } else {
+//                requestPermissions(permission, OptiConstant.ADD_ITEMS_IN_STORAGE)
+//            }
+//        } else {
+//            itemStorageAction()
+//        }
+//    }
 
     private fun itemStorageAction() {
         val sessionManager = OptiSessionManager()

@@ -121,7 +121,7 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
                             file, videoUri, videoFileTwo
                         )
 
-                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+                    }.show(parentFragmentManager, "OptiVideoPreviewFragment")
                 }
 
 
@@ -146,8 +146,8 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
         tvVideoProcessing = rootView.findViewById(R.id.tvVideoProcessing)
 
 
-        saveVideo.setOnClickListener {
 
+        saveVideo.setOnClickListener {
             val outputFile = OptiUtils.createVideoFile(requireContext())
             Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
 
@@ -183,7 +183,7 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
             requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
 
 
-        fabVideo?.setOnClickListener {
+        fabVideo.setOnClickListener {
 
             checkAllPermission(OptiConstant.PERMISSION_CAMERA)
 //
@@ -193,7 +193,7 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
         fabPreview?.setOnClickListener {
 
 //            previewVideo(videoResult, videoUri!!, videoFileTwo)
-//
+
 
         }
 
@@ -213,19 +213,20 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
                     file, videoUri, videoFileTwo
                 )
 
-            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+            }.show(parentFragmentManager, "OptiVideoPreviewFragment")
         }
 
 
     }
 
     fun captureVideoSnapshot() {
+
         overlayVideo.stop()
         overlayVideo.setVideoFromUri(activity, videoUri)
         overlayVideo.start()
         if (camera!!.isTakingVideo) {
             camera!!.stopVideo()
-            fabVideo!!.setImageResource(R.drawable.ic_videocam_black_24dp)
+            fabVideo.setImageResource(R.drawable.ic_videocam_black_24dp)
             return
         }
         videoFileOne = OptiUtils.createVideoFile(requireContext())

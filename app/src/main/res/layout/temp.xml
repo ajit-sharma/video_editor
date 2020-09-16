@@ -10,7 +10,7 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent"
         android:keepScreenOn="true"
-        app:cameraAudio="off">
+        app:cameraAudio="on">
 
 
         <com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
@@ -26,6 +26,7 @@
             app:layout_drawOnVideoSnapshot="true"
             custom:accuracy="0.4"
             custom:alphaColor="#00ff00" />
+
 
     </com.otaliastudios.cameraview.CameraView>
 
@@ -72,7 +73,7 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_marginBottom="16dp"
-            android:text="Preview"
+            android:text="@string/preview"
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold"
@@ -90,6 +91,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:fabSize="mini"
             app:layout_constraintStart_toStartOf="parent"
             app:layout_constraintTop_toTopOf="parent" />
@@ -103,6 +105,7 @@
             android:textColor="@color/black"
             android:textSize="@dimen/_12sdp"
             android:textStyle="bold"
+            android:visibility="gone"
             app:layout_constraintEnd_toEndOf="@id/save_overlay_view"
             app:layout_constraintStart_toStartOf="@id/save_overlay_view"
             app:layout_constraintTop_toBottomOf="@id/save_overlay_view" />
@@ -128,6 +131,19 @@
             android:src="@drawable/ic_videocam_black_24dp"
             app:fabSize="normal"
             app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintEnd_toEndOf="parent"
+            app:layout_constraintStart_toStartOf="parent" />
+
+        <Chronometer
+            android:id="@+id/recordingTime"
+            android:layout_width="69dp"
+            android:layout_height="54dp"
+            android:layout_margin="16dp"
+            android:text="00:00"
+            android:textAlignment="center"
+            android:textColor="@color/white"
+            app:layout_constraintBottom_toBottomOf="parent"
+            app:layout_constraintBottom_toTopOf="@id/fab_video"
             app:layout_constraintEnd_toEndOf="parent"
             app:layout_constraintStart_toStartOf="parent" />
 

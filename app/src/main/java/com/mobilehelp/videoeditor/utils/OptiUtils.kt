@@ -13,10 +13,7 @@ import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Environment
 import android.util.Log
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
+import java.io.*
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -161,6 +158,30 @@ object OptiUtils {
         retriever.release()
         return timeInMillis
     }
+
+    fun getVideoDuration(context: Context, uri: Uri): Long {
+        val retriever = MediaMetadataRetriever()
+        retriever.setDataSource(context, uri)
+        val time = retriever.extractMetadata(MediaMetadataRetriever.METADATA_KEY_DURATION)
+        val timeInMillis = time.toLong()
+        retriever.release()
+        return timeInMillis
+    }
+
+
+    @Throws(IOException::class)
+    fun copyFile(src: File, dst: File) {
+        val var2 = FileInputStream(src)
+        val var3 = FileOutputStream(dst)
+        val var4 = ByteArray(1024)
+        var var5: Int
+        while (var2.read(var4).also { var5 = it } > 0) {
+            var3.write(var4, 0, var5)
+        }
+        var2.close()
+        var3.close()
+    }
+
 }
 
 

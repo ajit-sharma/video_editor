@@ -20,8 +20,67 @@
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
 
-        <!--OptiSplashScreen-->
-        <activity android:name="com.mobilehelp.videoeditor.MainActivity">
+           <!-- Don't forgot InitActivity -->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.activity.InitActivity"-->
+<!--            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"-->
+<!--            android:launchMode="singleTop"-->
+<!--            android:theme="@android:style/Theme.NoTitleBar"-->
+<!--            android:windowSoftInputMode="stateAlwaysHidden" />-->
+<!--        <activity android:name="io.vov.vitamio.demo.VitamioListActivity" >-->
+<!--            <intent-filter>-->
+<!--                <action android:name="android.intent.action.MAIN" />-->
+
+<!--                <category android:name="android.intent.category.DEFAULT" />-->
+<!--                <category android:name="android.intent.category.LAUNCHER" />-->
+<!--            </intent-filter>-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaPlayerDemo"-->
+<!--            android:label="Media/MediaPlayer" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.VideoViewDemo"-->
+<!--            android:configChanges="orientation|screenSize|smallestScreenSize|keyboard|keyboardHidden|navigation"-->
+<!--            android:label="Media/VideoView" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaPlayerDemo_Video"-->
+<!--            android:label="Media/MediaPlayer" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaPlayerDemo_setSurface"-->
+<!--            android:label="Media/MediaPlayer" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaPlayerDemo_Audio"-->
+<!--            android:label="Media/MediaPlayer" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaMetadataRetrieverDemo"-->
+<!--            android:label="Media/MediaMetadata" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.MediaPlayerSubtitle"-->
+<!--            android:label="@string/title_activity_media_player_subtitle" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.VideoViewSubtitle"-->
+<!--            android:label="@string/title_activity_video_view_subtitle" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.VideoSubtitleList"-->
+<!--            android:label="@string/title_activity_video_subtitle_list" >-->
+<!--        </activity>-->
+<!--        <activity-->
+<!--            android:name="io.vov.vitamio.demo.VideoViewBuffer"-->
+<!--            android:label="@string/title_activity_video_buffer" >-->
+<!--        </activity>-->
+
+<!--        &lt;!&ndash;OptiSplashScreen&ndash;&gt;-->
+        <activity
+            android:name="com.mobilehelp.videoeditor.MainActivity"
+            android:screenOrientation="locked">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -29,17 +88,12 @@
             </intent-filter>
         </activity>
 
-        <!--        &lt;!&ndash;MainActivity&ndash;&gt;-->
-        <!--        <activity android:name="com.obs.marveleditor.MainActivity"-->
-        <!--                  android:screenOrientation="portrait"-->
-        <!--                  android:configChanges="orientation|keyboardHidden">-->
-        <!--        </activity>-->
-
-        <!--OptiTrimmerActivity-->
         <activity
             android:name="com.mobilehelp.videoeditor.OptiTrimmerActivity"
             android:configChanges="orientation|keyboardHidden"
             android:screenOrientation="portrait" />
+
+
 
         <!--FileProvider-->
         <provider

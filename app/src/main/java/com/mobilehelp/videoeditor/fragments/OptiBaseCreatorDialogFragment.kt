@@ -15,13 +15,13 @@ import android.content.pm.PackageManager
 import android.net.Uri
 import android.os.Bundle
 import android.provider.Settings
-import android.widget.Toast
-import com.github.hiteshsondhi88.libffmpeg.FFmpeg
-import java.io.File
 import android.webkit.MimeTypeMap
+import android.widget.Toast
 import androidx.core.app.ActivityCompat
 import androidx.fragment.app.DialogFragment
+import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.mobilehelp.videoeditor.R
+import java.io.File
 
 abstract class OptiBaseCreatorDialogFragment : DialogFragment() {
     private var permissionsRequired = arrayOf(Manifest.permission.WRITE_EXTERNAL_STORAGE)
@@ -34,16 +34,28 @@ abstract class OptiBaseCreatorDialogFragment : DialogFragment() {
         this.isCancelable = false
     }
 
-    override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<String>, grantResults: IntArray) {
+    override fun onRequestPermissionsResult(
+        requestCode: Int,
+        permissions: Array<String>,
+        grantResults: IntArray
+    ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
             130 -> {
                 for (permission in permissions) {
-                    if (ActivityCompat.shouldShowRequestPermissionRationale(activity as Activity, permission)) {
+                    if (ActivityCompat.shouldShowRequestPermissionRationale(
+                            activity as Activity,
+                            permission
+                        )
+                    ) {
                         //denied
                         Toast.makeText(context, "Permission Denied", Toast.LENGTH_SHORT).show()
                     } else {
-                        if (ActivityCompat.checkSelfPermission(requireContext(), permissionsRequired[0]) == PackageManager.PERMISSION_GRANTED) {
+                        if (ActivityCompat.checkSelfPermission(
+                                requireContext(),
+                                permissionsRequired[0]
+                            ) == PackageManager.PERMISSION_GRANTED
+                        ) {
                             //SaveImage()
                         } else {
                             callPermissionSettings()
@@ -71,7 +83,11 @@ abstract class OptiBaseCreatorDialogFragment : DialogFragment() {
     override fun onResume() {
         super.onResume()
 
-        if (ActivityCompat.checkSelfPermission(requireContext(), permissionsRequired[0]) != PackageManager.PERMISSION_GRANTED) {
+        if (ActivityCompat.checkSelfPermission(
+                requireContext(),
+                permissionsRequired[0]
+            ) != PackageManager.PERMISSION_GRANTED
+        ) {
             requestPermissions(permissionsRequired, 130)
         }
     }
@@ -89,6 +105,7 @@ abstract class OptiBaseCreatorDialogFragment : DialogFragment() {
         fun onAudioFileProcessed(convertedAudioFile: File)
 
         fun showLoading(isShow: Boolean)
+//        fun progressTextUpdate(progress: String)
 
         fun openGallery()
 
@@ -107,7 +124,11 @@ abstract class OptiBaseCreatorDialogFragment : DialogFragment() {
     }
 
     fun showInProgressToast() {
-        Toast.makeText(activity, "Operation already in progress! Try again in a while.", Toast.LENGTH_SHORT).show()
+        Toast.makeText(
+            activity,
+            "Operation already in progress! Try again in a while.",
+            Toast.LENGTH_SHORT
+        ).show()
     }
 
     fun getMimeType(url: String): String? {

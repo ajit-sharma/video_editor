@@ -7,8 +7,12 @@
 
 package com.mobilehelp.videoeditor
 
+//import com.github.hiteshsondhi88.libffmpeg.FFmpeg
+
 import android.content.Context
 import android.util.Log
+//import com.arthenica.mobileffmpeg.FFmpeg
+//import com.arthenica.mobileffmpeg.FFprobe
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
@@ -17,6 +21,7 @@ import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiOutputType
 import java.io.File
 import java.io.IOException
+
 
 class OptiVideoEditor private constructor(private val context: Context) {
 
@@ -53,8 +58,14 @@ class OptiVideoEditor private constructor(private val context: Context) {
     private var filterCommand: String? = null
 
     companion object {
+        lateinit var abc: OptiVideoEditor
         fun with(context: Context): OptiVideoEditor {
-            return OptiVideoEditor(context)
+            abc = OptiVideoEditor(context)
+            return abc
+        }
+
+        fun getInstance(): OptiVideoEditor {
+            return abc
         }
 
         //for adding text
@@ -148,7 +159,9 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
     fun setSpeedTempo(playbackSpeed: String, tempo: String): OptiVideoEditor {
         this.ffmpegFS =
-            if (havingAudio) "[0:v]setpts=$playbackSpeed*PTS[v];[0:a]atempo=$tempo[a]" else "setpts=$playbackSpeed*PTS"
+            if (havingAudio) "[0:v]setpts=$playbackSpeed*PTS[v];[0:a]atempo=$tempo[a]"
+            else
+                "setpts=$playbackSpeed*PTS"
         Log.v(tagName, "ffmpegFS: $ffmpegFS")
         return this
     }
@@ -235,26 +248,29 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
 //                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path,"-filter_complex","[0]colorkey=0x00ff00:0.02:0.03[keyed];[1][keyed]overlay=10:10[keyed]", "-preset", "veryfast" ,  outputFile.path)
                 cmd = arrayOf(
-                    "-y",
-                    "-i",
+                    "-y",//
+                    "-i",//input
                     videoFile!!.path,
-                    "-i",
+                    "-i", // input
                     videoFileTwo!!.path,
-                    "-filter_complex",
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]",
-
-                    "-map",
-                    "[out]",
-                    "-vsync",
-                    "0",
-
-                    "-c:v",
-                    "libx264",
-                    "-crf",
-                    "23",
-                    "-preset",
-                    "veryfast",
-                    outputFile.path
+                    "-filter_complex", //filter
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
+                    "-map",//merge
+                    "[out]",// output
+                    "-vsync",// necessary to prevent same frame to process
+                    "0",// best vsync option
+                    "-map", // merge
+                    "0:a",// audio from 1st video
+                    "-c:v", // -c = codec v = video
+                    "libx264", // video codac name
+//                    "mpeg4", // video codac name
+                    "-crf", // control bitrat
+                    "23", // optimal
+                    "-preset", // option
+                    "ultrafast",// preset param
+//                    "-r", // bitrat
+//                    "30", // 30 FSP
+                    outputFile.path // output path
                 )
             }
 
@@ -401,7 +417,52 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     outputFile.path
                 )
             }
+            OptiConstant.VIDEO_REMOVE_CHROMA -> {
+                //remove chroma key only -i input.mp4 -vf "chromakey=0x00ff00:0.1:0.2" -c copy -c:v png output.mov
+                cmd = arrayOf(
+                    "-y",
+                    "-i",
+                    videoFile!!.path,
+                    "-vf",
+                    "chromakey=0x00ff00:0.1:0.2",
+                    "-c",
+                    "copy",
+                    "-c:v",
+                    "-preset",
+                    "ultrafast",
+                    outputFile.path
+                )
+            }
         }
+
+//        val info = FFprobe.getMediaInformation(videoFile!!.path)
+//        Log.d("INFO", info.allProperties.toString())
+//        val videoFile2 = FFprobe.getMediaInformation(videoFileTwo!!.path)
+//        Log.d("videoFile2", videoFile2.allProperties.toString())
+
+//        val executionId: Long = FFmpeg.executeAsync(
+//            cmd
+//        ) { executionId, returnCode ->
+//            if (returnCode == Config.RETURN_CODE_SUCCESS) {
+//                Log.i(Config.TAG, "Async command execution completed successfully.")
+//                callback!!.onSuccess(outputFile, OptiOutputType.TYPE_VIDEO)
+//            } else if (returnCode == Config.RETURN_CODE_CANCEL) {
+//                Log.i(Config.TAG, "Async command execution cancelled by user.")
+//                if (outputFile.exists()) {
+//                    outputFile.delete()
+//                }
+//                callback!!.onFailure(IOException("Async command execution cancelled by user."))
+//            } else {
+//                Log.i(
+//                    Config.TAG,
+//                    java.lang.String.format(
+//                        "Async command execution failed with rc=%d.",
+//                        returnCode
+//                    )
+//                )
+//            }
+//             callback!!.onFinish()
+//        }
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {
