@@ -32,7 +32,11 @@ import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
-import com.otaliastudios.cameraview.*
+import com.otaliastudios.cameraview.CameraListener
+import com.otaliastudios.cameraview.CameraView
+import com.otaliastudios.cameraview.PictureResult
+import com.otaliastudios.cameraview.VideoResult
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -146,13 +150,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
-
-//
-//                fabPreview!!.visibility = View.VISIBLE
-//
-
                 result?.let { file ->
-
                     backGroundVideoResult = file
                     showPreview(
                         file,
@@ -163,7 +161,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
                         location[0],
                         location[1]
                     )
-
+                    doStoreVideo()
 
                 }
 
@@ -220,7 +218,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
         val result: VideoResult? =
             if (videoResult == null) null else videoResult!!.get()
 
-        videoFileOne = result!!.file
         val controller = MediaController(activity)
         controller.setAnchorView(videoView)
         controller.setMediaPlayer(videoView)
@@ -263,32 +260,36 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
 
         imgSave!!.setOnClickListener {
+            doStoreVideo()
+        }
+    }
 
-            if (videoFileOne != null && videoFileTwo != null) {
+    fun doStoreVideo() {
+
+        if (videoFileOne != null && videoFileTwo != null) {
+            //output file is generated and send to video processing
+            val outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+            OptiVideoEditor.with(requireContext())
+                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                .setFile(videoFileOne!!)
+                .setFileTwo(videoFileTwo!!)
+                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setVideoPosition(location[0], location[1])
+                .setOutputPath(outputFile.path)
+                .setCallback(this)
+                .main()
+//            helper?.showLoading(true)
 
 
-                //output file is generated and send to video processing
-                val outputFile = OptiUtils.createVideoFile(requireContext())
-                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-
-                OptiVideoEditor.with(requireContext())
-                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-                    .setFile(videoFileOne!!)
-                    .setFileTwo(this.videoFileTwo!!)
-                    .setPosition(OptiVideoEditor.TOP_LEFT)
-                    .setVideoPosition(location[0], location[1])
-                    .setOutputPath(outputFile.path)
-                    .setCallback(this)
-                    .main()
-
-
-            } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
-            }
+        } else {
+            longToast(R.string.error_merge)
         }
 
 
     }
+
 
     override fun onDidNothing() {
         initializePlayer()
@@ -325,7 +326,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
             sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
             sharingIntent.type = "video/*"
             sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-            startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+            startActivity(Intent.createChooser(sharingIntent, "Share Video Single frag Using"))
             Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -352,8 +353,8 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     }
 
     fun openCamera() {
-        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
-//        captureVideoSnapshot()
+//        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+        captureVideoSnapshot()
     }
 
     private fun convertAviToMp4() {
@@ -388,6 +389,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     fun captureVideoSnapshot() {
         if (videoFileTwo !== null) {
+//            startOverlayChromakey(videoFileTwo!!)
             overlayVideo.stop()
             overlayVideo.setVideoFromUri(activity, videoUri)
             overlayVideo.start()
@@ -404,6 +406,39 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
             Toast.makeText(mContext, "Please Select Overlay Video", Toast.LENGTH_LONG).show()
         }
+
+    }
+
+    fun startOverlayChromakey(videoFileTwo: File) {
+
+        if (videoFileTwo != null) {
+
+//            //output file is generated and send to video processing
+            val outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+            OptiVideoEditor.with(requireContext())
+                .setType(OptiConstant.VIDEO_CLIP_ART_OVERLAY)
+                .setFile(videoFileTwo)
+                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setVideoPosition(location[0], location[1])
+                .setOutputPath(outputFile.path)
+                .setCallback(this)
+                .main()
+
+
+        } else {
+            longToast(R.string.error_merge)
+        }
+
+//        val outputFile = OptiUtils.createVideoFile(requireContext())
+//        OptiVideoEditor.with(requireContext())
+//            .setType(OptiConstant.MERGE_VIDEO)
+//            .setFileTwo(videoFileTwo)
+//            .setPosition(OptiVideoEditor.TOP_LEFT)
+//            .setOutputPath(outputFile.path)
+//            .setCallback(this)
+//            .main()
 
     }
 

@@ -61,14 +61,12 @@
 
             <ProgressBar
                 android:id="@+id/progressBar"
-                style="?android:attr/progressBarStyleHorizontal"
-                android:layout_width="match_parent"
+                android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
-                android:layout_marginTop="@dimen/_25sdp"
-                android:indeterminate="false"
+                android:layout_gravity="center_horizontal"
+                android:indeterminate="true"
                 android:indeterminateTint="@color/blue"
                 android:indeterminateTintMode="src_in"
-                android:max="100"
                 android:progressBackgroundTint="@color/light_blue"
                 android:visibility="invisible" />
 
@@ -81,6 +79,14 @@
                 android:text="@string/processing_video"
                 android:textColor="@color/white"
                 android:visibility="invisible" />
+
+            <Chronometer
+                android:id="@+id/chronometer"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_margin="16dp"
+                android:textAlignment="center"
+                android:textColor="@color/white" />
 
         </LinearLayout>
 

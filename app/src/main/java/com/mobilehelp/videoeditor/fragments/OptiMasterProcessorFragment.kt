@@ -17,10 +17,7 @@ import android.content.SharedPreferences
 import android.content.pm.PackageManager
 import android.content.res.Configuration
 import android.net.Uri
-import android.os.Build
-import android.os.Bundle
-import android.os.Environment
-import android.os.Handler
+import android.os.*
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -51,6 +48,7 @@ import com.mobilehelp.videoeditor.adapter.OptiVideoOptionsAdapter
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -89,6 +87,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
     private var isLargeVideo: Boolean? = false
     private var mContext: Context? = null
     private var tvInfo: TextView? = null
+    private lateinit var meter: Chronometer
 
     override fun onCreateView(
         inflater: LayoutInflater,
@@ -110,6 +109,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         ibSelectVideo = rootView?.findViewById(R.id.ibSelectVideo)
         progressBar = rootView?.findViewById(R.id.progressBar)!!
         tvVideoProcessing = rootView.findViewById(R.id.tvVideoProcessing)
+        meter = rootView.findViewById(R.id.chronometer)
         tvInfo = rootView.findViewById(R.id.tvInfo)
 
 
@@ -186,7 +186,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         ibSelectVideo?.setOnClickListener {
             Temp.newInstance().apply {
                 setHelper(this@OptiMasterProcessorFragment)
-            }.show(requireFragmentManager(), "Temp")
+            }.show(parentFragmentManager, "Temp")
         }
 
 
@@ -229,7 +229,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
                 sharingIntent.type = "video/*"
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-                startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+                startActivity(Intent.createChooser(sharingIntent, "Share Video in Optimaster Using"))
 
 //                ShareCompat.IntentBuilder.from(activity)
 //                    .setStream(screenshotUri)
@@ -332,13 +332,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
                 sharingIntent.type = "video/*"
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-                startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+                startActivity(Intent.createChooser(sharingIntent, "Share Video optimaster 1 Using"))
                 Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
                     .show()
             }
-
         } else {
-
             Log.v("onFileProcessed", "saveVideo" + saveNShare)
             if (masterVideoFile != null) {
                 val outputFile = createSaveVideoFile()
@@ -358,10 +356,13 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         if (isShow) {
             progressBar.visibility = View.VISIBLE
             tvVideoProcessing!!.visibility = View.VISIBLE
-            setProgressValue()
+//            setProgressValue()
+            meter.setBase(SystemClock.elapsedRealtime())
+            meter.start()
         } else {
             progressBar.visibility = View.INVISIBLE
             tvVideoProcessing!!.visibility = View.INVISIBLE
+            meter.stop()
         }
     }
 
@@ -412,19 +413,19 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         }
     }
 
-    private fun checkStoragePermission(permission: Array<String>) {
-        val blockedPermission = checkHasPermission(activity, permission)
-        if (blockedPermission != null && blockedPermission.size > 0) {
-            val isBlocked = isPermissionBlocked(activity, blockedPermission)
-            if (isBlocked) {
-                callPermissionSettings()
-            } else {
-                requestPermissions(permission, OptiConstant.ADD_ITEMS_IN_STORAGE)
-            }
-        } else {
-            itemStorageAction()
-        }
-    }
+//    private fun checkStoragePermission(permission: Array<String>) {
+//        val blockedPermission = checkHasPermission(activity, permission)
+//        if (blockedPermission != null && blockedPermission.size > 0) {
+//            val isBlocked = isPermissionBlocked(activity, blockedPermission)
+//            if (isBlocked) {
+//                callPermissionSettings()
+//            } else {
+//                requestPermissions(permission, OptiConstant.ADD_ITEMS_IN_STORAGE)
+//            }
+//        } else {
+//            itemStorageAction()
+//        }
+//    }
 
     private fun itemStorageAction() {
         val sessionManager = OptiSessionManager()
@@ -1041,19 +1042,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_filter)
-                    )
+                    longToast(R.string.error_filter)
+
                 }
             }
 
-
-
-
-
-
-          
 
         }
     }

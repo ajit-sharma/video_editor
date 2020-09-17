@@ -1,15 +1,14 @@
 // Top-level build file where you can add configuration options common to all sub-projects/modules.
 buildscript {
-    ext.kotlin_version = "1.4.0"
-
-
+    ext.kotlin_version = "1.4.10"
     ext.exoPlayer = '2.7.3'
     ext.exoPlayerCore = '2.9.3'
     ext.FFmpeg = '0.3.2'
     ext.jcodec = '0.1.9'
     ext.seekbar = '1.0.3'
-    ext.GlideToast = '1.0'
-    ext.fresco = '1.9.0'
+    ext.anko_version = '0.10.8'
+//    ext.GlideToast = '1.0'
+//    ext.fresco = '1.9.0'
     ext.sdpSize = '1.0.6'
 
     repositories {

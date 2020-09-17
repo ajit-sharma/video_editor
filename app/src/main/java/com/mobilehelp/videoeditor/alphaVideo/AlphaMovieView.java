@@ -140,12 +140,7 @@ public class AlphaMovieView extends GLTextureView {
     }
 
     private void prepareAndStartMediaPlayer() {
-        prepareAsync(new MediaPlayer.OnPreparedListener() {
-            @Override
-            public void onPrepared(MediaPlayer mp) {
-                start();
-            }
-        });
+        prepareAsync(mp -> start());
     }
 
     private void calculateVideoAspectRatio(int videoWidth, int videoHeight) {
@@ -304,6 +299,7 @@ public class AlphaMovieView extends GLTextureView {
                 public void onPrepared(MediaPlayer mp) {
                     state = PlayerState.PREPARED;
                     onPreparedListener.onPrepared(mp);
+
                 }
             });
             mediaPlayer.prepareAsync();
