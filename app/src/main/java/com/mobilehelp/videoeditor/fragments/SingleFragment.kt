@@ -147,13 +147,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
-
-//
-//                fabPreview!!.visibility = View.VISIBLE
-//
-
                 result?.let { file ->
-
                     backGroundVideoResult = file
                     showPreview(
                         file,
@@ -164,7 +158,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
                         location[0],
                         location[1]
                     )
-
+                    doStoreVideo()
 
                 }
 
@@ -263,32 +257,55 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
 
         imgSave!!.setOnClickListener {
-
-            if (videoFileOne != null && videoFileTwo != null) {
-
-
-                //output file is generated and send to video processing
-                val outputFile = OptiUtils.createVideoFile(requireContext())
-                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-
-                OptiVideoEditor.with(requireContext())
-                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-                    .setFile(videoFileOne!!)
-                    .setFileTwo(videoFileTwo!!)
-                    .setPosition(OptiVideoEditor.TOP_LEFT)
-                    .setVideoPosition(location[0], location[1])
-                    .setOutputPath(outputFile.path)
-                    .setCallback(this)
-                    .main()
-
-
-            } else {
-                longToast(R.string.error_merge)
-            }
+            doStoreVideo()
+//            if (videoFileOne != null && videoFileTwo != null) {
+//                //output file is generated and send to video processing
+//                val outputFile = OptiUtils.createVideoFile(requireContext())
+//                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+//
+//                OptiVideoEditor.with(requireContext())
+//                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+//                    .setFile(videoFileOne!!)
+//                    .setFileTwo(videoFileTwo!!)
+//                    .setPosition(OptiVideoEditor.TOP_LEFT)
+//                    .setVideoPosition(location[0], location[1])
+//                    .setOutputPath(outputFile.path)
+//                    .setCallback(this)
+//                    .main()
+//            } else {
+//                longToast(R.string.error_merge)
+//            }
         }
 
 
     }
+
+    fun doStoreVideo() {
+
+        if (videoFileOne != null && videoFileTwo != null) {
+            //output file is generated and send to video processing
+            val outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+            OptiVideoEditor.with(requireContext())
+                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                .setFile(videoFileOne!!)
+                .setFileTwo(videoFileTwo!!)
+                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setVideoPosition(location[0], location[1])
+                .setOutputPath(outputFile.path)
+                .setCallback(this)
+                .main()
+//            helper?.showLoading(true)
+
+
+        } else {
+            longToast(R.string.error_merge)
+        }
+
+
+    }
+
 
     override fun onDidNothing() {
         initializePlayer()
@@ -387,7 +404,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     fun captureVideoSnapshot() {
         if (videoFileTwo !== null) {
-            startOverlayChromakey(videoFileTwo!!)
+//            startOverlayChromakey(videoFileTwo!!)
             overlayVideo.stop()
             overlayVideo.setVideoFromUri(activity, videoUri)
             overlayVideo.start()
@@ -410,7 +427,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     fun startOverlayChromakey(videoFileTwo: File) {
 
         if (videoFileTwo != null) {
-
 
 //            //output file is generated and send to video processing
             val outputFile = OptiUtils.createVideoFile(requireContext())

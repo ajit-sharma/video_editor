@@ -298,10 +298,8 @@ class OptiVideoEditor private constructor(private val context: Context) {
 //                    videoFileTwo!!.path,
 //                    "-filter_complex",
 //                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
-//
 //                    "-map",
 //                    "[out]",
-//
 //                    "-vsync",
 //                    "0",
 //                    "-r", "20",
@@ -313,31 +311,58 @@ class OptiVideoEditor private constructor(private val context: Context) {
 //                    outputFile.path
 //                )
 
-//                "[1:v]colorkey=0x00ff00:0.1:0.2[ckout];[0:v][ckout]"
-                cmd = arrayOf(
-                    "-y",
-                    "-i",
+                  cmd = arrayOf(
+                    "-y",//
+                    "-i",//input
                     videoFile!!.path,
-                    "-i",
+                    "-i", // input
                     videoFileTwo!!.path,
-                    "-filter_complex",
-//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
-                    fixPosition!! + "[out]",
-                    "-map",
-                    "[out]",
-                    "-map", "1:a", "-c:a", "copy",
-                    "-vsync",
-                    "0",
-                    "-ab",
-                    "48000",
-                    "-c:v",
-                    "libx264",
-                    "-crf",
-                    "23",
-                    "-preset",
-                    "veryfast",
-                    outputFile.path
+                    "-filter_complex", //filter
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
+                    "-map",//merge
+                    "[out]",// output
+                    "-vsync",// necessary to prevent same frame to process
+                    "0",// best vsync option
+                    "-map", // merge
+                    "0:a",// audio from 1st video
+                    "-c:v", // -c = codec v = video
+                    "libx264", // video codac name
+//                    "mpeg4", // video codac name
+                    "-crf", // control bitrat
+                    "23", // optimal
+                    "-preset", // option
+                    "ultrafast",// preset param
+//                    "-r", // bitrat
+//                    "30", // 30 FSP
+                    outputFile.path // output path
                 )
+
+
+//                "[1:v]colorkey=0x00ff00:0.1:0.2[ckout];[0:v][ckout]"
+//                cmd = arrayOf(
+//                    "-y",
+//                    "-i",
+//                    videoFile!!.path,
+//                    "-i",
+//                    videoFileTwo!!.path,
+//                    "-filter_complex",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]"+fixPosition!!+"[out]",
+////                    fixPosition!! + "[out]",
+//                    "-map",
+//                    "[out]",
+//                    "-map", "1:a", "-c:a", "copy",
+//                    "-vsync",
+//                    "0",
+//                    "-ab",
+//                    "48000",
+//                    "-c:v",
+//                    "libx264",
+//                    "-crf",
+//                    "23",
+//                    "-preset",
+//                    "veryfast",
+//                    outputFile.path
+//                )
 
             }
 
@@ -498,35 +523,6 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
         }
-
-//        val info = FFprobe.getMediaInformation(videoFile!!.path)
-//        Log.d("INFO", info.allProperties.toString())
-//        val videoFile2 = FFprobe.getMediaInformation(videoFileTwo!!.path)
-//        Log.d("videoFile2", videoFile2.allProperties.toString())
-
-//        val executionId: Long = FFmpeg.executeAsync(
-//            cmd
-//        ) { executionId, returnCode ->
-//            if (returnCode == Config.RETURN_CODE_SUCCESS) {
-//                Log.i(Config.TAG, "Async command execution completed successfully.")
-//                callback!!.onSuccess(outputFile, OptiOutputType.TYPE_VIDEO)
-//            } else if (returnCode == Config.RETURN_CODE_CANCEL) {
-//                Log.i(Config.TAG, "Async command execution cancelled by user.")
-//                if (outputFile.exists()) {
-//                    outputFile.delete()
-//                }
-//                callback!!.onFailure(IOException("Async command execution cancelled by user."))
-//            } else {
-//                Log.i(
-//                    Config.TAG,
-//                    java.lang.String.format(
-//                        "Async command execution failed with rc=%d.",
-//                        returnCode
-//                    )
-//                )
-//            }
-//             callback!!.onFinish()
-//        }
 
         try {
             FFmpeg.getInstance(context).execute(cmd, object : ExecuteBinaryResponseHandler() {

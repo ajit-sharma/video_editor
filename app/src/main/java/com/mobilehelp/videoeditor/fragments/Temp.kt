@@ -1063,41 +1063,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 ////
 ////    }
 //
-//    fun doStoreVideo() {
-//
-//        if (videoFileOne != null && videoFileTwo != null) {
-////            AlertDialog.Builder(requireContext())
-////                .setTitle(OptiConstant.APP_NAME)
-////                .setMessage(getString(R.string.save_video))
-////                .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
-////                    dismiss()
-//            //output file is generated and send to video processing
-//            val outputFile = OptiUtils.createVideoFile(requireContext())
-//            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-//
-//            OptiVideoEditor.with(requireContext())
-//                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-//                .setFile(videoFileOne!!)
-//                .setFileTwo(videoFileTwo!!)
-//                .setPosition(OptiVideoEditor.TOP_LEFT)
-//                .setVideoPosition(location[0], location[1])
-//                .setOutputPath(outputFile.path)
-//                .setCallback(this)
-//                .main()
-//
-//            helper?.showLoading(true)
-////        }.setNegativeButton(R.string.cancel) { dialog, which -> }
-////            .show()
-//
-//
-//    } else
-//    {
-//        longToast(R.string.error_merge)
-//    }
-//
-//
-//}
-//}
+
 //
 //
 //fun openGallery() {
