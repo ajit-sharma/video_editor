@@ -14,10 +14,10 @@ import android.util.Log
 import android.view.LayoutInflater
 import android.view.View
 import android.view.ViewGroup
+import android.widget.ImageView
 import android.widget.TextView
 import androidx.constraintlayout.widget.ConstraintLayout
 import androidx.recyclerview.widget.RecyclerView
-import com.facebook.drawee.view.SimpleDraweeView
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.interfaces.OptiFilterListener
 
@@ -65,7 +65,7 @@ class OptiFilterAdapter(filterList: ArrayList<String>, bitmap: Bitmap, val conte
 
     class MyPostViewHolder(itemView: View) : RecyclerView.ViewHolder(itemView) {
         var tvFilter: TextView = itemView.findViewById(R.id.tvFilter)
-        var ivFilter: SimpleDraweeView = itemView.findViewById(R.id.ivFilter)
+        var ivFilter: ImageView = itemView.findViewById(R.id.ivFilter)
         var clFilter: ConstraintLayout = itemView.findViewById(R.id.clFilter)
     }
 

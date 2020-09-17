@@ -28,6 +28,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiFilterListener
 import com.mobilehelp.videoeditor.utils.OptiConstant
 import com.mobilehelp.videoeditor.utils.OptiUtils
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 
 
@@ -102,7 +103,8 @@ class OptiFilterFragment : BottomSheetDialogFragment(), OptiFilterListener, Opti
                     }
                 }
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_select_filter))
+
+                longToast(R.string.error_select_filter)
             }
         }
 

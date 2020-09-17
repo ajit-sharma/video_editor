@@ -48,6 +48,7 @@ import com.mobilehelp.videoeditor.adapter.OptiVideoOptionsAdapter
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
@@ -183,9 +184,9 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
 
         ibSelectVideo?.setOnClickListener {
-            Temp.getInstance().apply {
+            Temp.newInstance().apply {
                 setHelper(this@OptiMasterProcessorFragment)
-            }.show(requireFragmentManager(), "Temp")
+            }.show(parentFragmentManager, "Temp")
         }
 
 
@@ -1043,19 +1044,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 }
 
                 if (masterVideoFile == null) {
-                    OptiUtils.showGlideToast(
-                        requireActivity(),
-                        getString(R.string.error_filter)
-                    )
+                    longToast(R.string.error_filter)
+
                 }
             }
 
-
-
-
-
-
-          
 
         }
     }

@@ -2,6 +2,7 @@
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
     package="com.mobilehelp.videoeditor">
+
     <uses-permission android:name="android.permission.CAMERA" />
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
     <uses-permission android:name="android.permission.RECORD_AUDIO" />
@@ -18,9 +19,9 @@
         android:supportsRtl="true"
         android:theme="@style/AppTheme"
         tools:replace="android:allowBackup">
-
-        <!--OptiSplashScreen-->
-        <activity android:name="com.mobilehelp.videoeditor.MainActivity">
+        <activity
+            android:name="com.mobilehelp.videoeditor.MainActivity"
+            android:screenOrientation="locked">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -31,8 +32,7 @@
         <activity
             android:name="com.mobilehelp.videoeditor.OptiTrimmerActivity"
             android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="portrait" />
-
+            android:screenOrientation="locked" />
 
 
         <!--FileProvider-->

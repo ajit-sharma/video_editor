@@ -9,17 +9,12 @@ package com.mobilehelp.videoeditor.utils
 
 import android.content.Context
 import android.content.Intent
+import android.media.MediaMetadataRetriever
 import android.net.Uri
 import android.os.Environment
-import java.io.File
-import java.io.FileNotFoundException
-import java.io.IOException
-import java.io.InputStream
-import android.media.MediaMetadataRetriever
-import android.util.Log
-import com.jeevandeshmukh.glidetoastlib.GlideToast
 import android.util.Log
 import java.io.*
+import java.io.File
 import java.text.SimpleDateFormat
 import java.util.*
 
@@ -27,7 +22,8 @@ object OptiUtils {
 
     val outputPath: String
         get() {
-            val path = Environment.getExternalStorageDirectory().toString() + File.separator + OptiConstant.APP_NAME + File.separator
+            val path = Environment.getExternalStorageDirectory()
+                .toString() + File.separator + OptiConstant.APP_NAME + File.separator
 
             val folder = File(path)
             if (!folder.exists())
@@ -37,10 +33,11 @@ object OptiUtils {
         }
 
     fun copyFileToInternalStorage(resourceId: Int, resourceName: String, context: Context): File {
-        val path = Environment.getExternalStorageDirectory().toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.CLIP_ARTS + File.separator
+        val path = Environment.getExternalStorageDirectory()
+            .toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.CLIP_ARTS + File.separator
         val folder = File(path)
-            if (!folder.exists())
-                folder.mkdirs()
+        if (!folder.exists())
+            folder.mkdirs()
 
         val dataPath = "$path$resourceName.png"
         Log.v("OptiUtils", "path: $dataPath")
@@ -57,7 +54,8 @@ object OptiUtils {
     }
 
     fun copyFontToInternalStorage(resourceId: Int, resourceName: String, context: Context): File {
-        val path = Environment.getExternalStorageDirectory().toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.FONT + File.separator
+        val path = Environment.getExternalStorageDirectory()
+            .toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.FONT + File.separator
         val folder = File(path)
         if (!folder.exists())
             folder.mkdirs()

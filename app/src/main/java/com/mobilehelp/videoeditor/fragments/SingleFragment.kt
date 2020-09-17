@@ -33,6 +33,7 @@ import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
 import com.otaliastudios.cameraview.*
+import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.lang.ref.WeakReference
 import java.util.*
@@ -282,7 +283,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
 
             } else {
-                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+                longToast(R.string.error_merge)
             }
         }
 
@@ -426,7 +427,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
 
         } else {
-            OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
+            longToast(R.string.error_merge)
         }
 
 //        val outputFile = OptiUtils.createVideoFile(requireContext())

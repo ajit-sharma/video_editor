@@ -199,25 +199,25 @@ class OptiCameraFragment : BottomSheetDialogFragment(), OptiBaseCreatorDialogFra
 
     }
 
-    fun previewVideo(
-        videoResult: VideoResult,
-        videoUri: Uri,
-        overlayVideoFile: File?
-    ) {
-
-        videoResult?.let { file ->
-
-            OptiVideoPreviewFragment.newInstance().apply {
-                setHelper(this@OptiCameraFragment)
-                setVideoResult(
-                    file, videoUri, videoFileTwo
-                )
-
-            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
-        }
-
-
-    }
+//    fun previewVideo(
+//        videoResult: VideoResult,
+//        videoUri: Uri,
+//        overlayVideoFile: File?
+//    ) {
+//
+//        videoResult?.let { file ->
+//
+//            OptiVideoPreviewFragment.newInstance().apply {
+//                setHelper(this@OptiCameraFragment)
+//                setVideoResult(
+//                    file, videoUri, videoFileTwo
+//                )
+//
+//            }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
+//        }
+//
+//
+//    }
 
     fun captureVideoSnapshot() {
         overlayVideo.stop()
