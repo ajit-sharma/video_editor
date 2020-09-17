@@ -102,7 +102,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     private fun initView(rootView: View?) {
 
-        CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
+//        CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
 
         viewSwitcher = rootView?.findViewById(R.id.view_switcher)!!
 
@@ -220,6 +220,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
         val result: VideoResult? =
             if (videoResult == null) null else videoResult!!.get()
 
+        videoFileOne = result!!.file
         val controller = MediaController(activity)
         controller.setAnchorView(videoView)
         controller.setMediaPlayer(videoView)
@@ -273,7 +274,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
                 OptiVideoEditor.with(requireContext())
                     .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
                     .setFile(videoFileOne!!)
-                    .setFileTwo(videoFileTwo!!)
+                    .setFileTwo(this.videoFileTwo!!)
                     .setPosition(OptiVideoEditor.TOP_LEFT)
                     .setVideoPosition(location[0], location[1])
                     .setOutputPath(outputFile.path)
@@ -352,6 +353,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     fun openCamera() {
         checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+//        captureVideoSnapshot()
     }
 
     private fun convertAviToMp4() {
@@ -386,7 +388,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     fun captureVideoSnapshot() {
         if (videoFileTwo !== null) {
-            startOverlayChromakey(videoFileTwo!!)
             overlayVideo.stop()
             overlayVideo.setVideoFromUri(activity, videoUri)
             overlayVideo.start()
@@ -403,40 +404,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
             Toast.makeText(mContext, "Please Select Overlay Video", Toast.LENGTH_LONG).show()
         }
-
-    }
-
-    fun startOverlayChromakey(videoFileTwo: File) {
-
-        if (videoFileTwo != null) {
-
-
-//            //output file is generated and send to video processing
-            val outputFile = OptiUtils.createVideoFile(requireContext())
-            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-
-            OptiVideoEditor.with(requireContext())
-                .setType(OptiConstant.VIDEO_CLIP_ART_OVERLAY)
-                .setFile(videoFileTwo)
-                .setPosition(OptiVideoEditor.TOP_LEFT)
-                .setVideoPosition(location[0], location[1])
-                .setOutputPath(outputFile.path)
-                .setCallback(this)
-                .main()
-
-
-        } else {
-            OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
-        }
-
-//        val outputFile = OptiUtils.createVideoFile(requireContext())
-//        OptiVideoEditor.with(requireContext())
-//            .setType(OptiConstant.MERGE_VIDEO)
-//            .setFileTwo(videoFileTwo)
-//            .setPosition(OptiVideoEditor.TOP_LEFT)
-//            .setOutputPath(outputFile.path)
-//            .setCallback(this)
-//            .main()
 
     }
 

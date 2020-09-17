@@ -124,26 +124,8 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
                     )
 
-//                    videoResult = result?.let { WeakReference(file) }
-//
-//                    OptiVideoPreviewFragment.newInstance().apply {
-//                        setVideoResult(
-//                            file, videoUri, videoFileTwo, _xDeltaTemp, _yDeltaTemp
-//                        )
-//
-//                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
                 }
 
-
-//                // refresh gallery
-//                MediaScannerConnection.scanFile(
-//                    activity,
-//                    arrayOf(result.file.toString()),
-//                    null
-//                ) { filePath: String, uri: Uri ->
-//                    Log.i("ExternalStorage", "Scanned $filePath:")
-//                    Log.i("ExternalStorage", "-> uri=$uri")
-//                }
             }
         })
 
@@ -159,34 +141,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         preferences =
             requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
 
-
-//        ivClose.setOnClickListener {
-//            dismiss()
-//        }
-//
-//        ivDone.setOnClickListener {
-//
-//            if (videoFileOne != null && videoFileTwo != null) {
-//                dismiss()
-//
-//                //output file is generated and send to video processing
-//                val outputFile = OptiUtils.createVideoFile(requireContext())
-//                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-//
-//                OptiVideoEditor.with(requireContext())
-//                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-//                    .setFile(videoFileOne!!)
-//                    .setFileTwo(videoFileTwo!!)
-//                    .setPosition(OptiVideoEditor.TOP_LEFT)
-//                    .setOutputPath(outputFile.path)
-//                    .setCallback(this)
-//                    .main()
-//
-//                helper?.showLoading(true)
-//            } else {
-//                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
-//            }
-//        }
 
         fabVideo!!.setOnClickListener {
 
