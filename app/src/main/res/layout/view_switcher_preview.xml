@@ -30,12 +30,12 @@
         <RelativeLayout
             android:id="@+id/root"
             android:layout_width="match_parent"
-            android:layout_height="wrap_content">
+            android:layout_height="match_parent">
 
             <com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
                 android:id="@+id/alphaMovie"
                 android:layout_width="wrap_content"
-                android:layout_height="wrap_content"
+                android:layout_height="match_parent"
                 android:layout_gravity="center"
                 android:visibility="visible"
                 custom:accuracy="0.4"

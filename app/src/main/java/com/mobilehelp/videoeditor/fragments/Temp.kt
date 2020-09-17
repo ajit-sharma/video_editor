@@ -48,12 +48,10 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
 
     private var camera: CameraView? = null
-    private var saveVideo: FloatingActionButton? = null
     private var fabVideo: ImageView? = null
     private var fabPicture: ImageView? = null
-    private var fabPreview: FloatingActionButton? = null
     private var fabFront: FloatingActionButton? = null
-    private var fabSave: FloatingActionButton? = null
+//    private var fabSave: FloatingActionButton? = null
     private var videoFileOne: File? = null
     private var videoFileTwo: File? = null
     private var videoUri: Uri? = null
@@ -95,26 +93,20 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         _root!!.setOnTouchListener(this)
 
         camera = rootView.findViewById(R.id.camera)
-        saveVideo = rootView.findViewById(R.id.save_overlay_view)
         camera!!.setLifecycleOwner(this)
 
         camera!!.videoMaxDuration = 120 * 1000 // max 2mins
 
         camera!!.addCameraListener(object : CameraListener() {
             override fun onPictureTaken(result: PictureResult) {
-
             }
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
 
-                fabPreview!!.visibility = View.VISIBLE
-
                 result?.let { file ->
-
                     backGroundVideoResult = file
                     showCustomDialog(
-
                         file,
                         videoUri,
                         videoFileTwo,
@@ -125,94 +117,41 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
                     )
 
-//                    videoResult = result?.let { WeakReference(file) }
-//
-//                    OptiVideoPreviewFragment.newInstance().apply {
-//                        setVideoResult(
-//                            file, videoUri, videoFileTwo, _xDeltaTemp, _yDeltaTemp
-//                        )
-//
-//                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
                 }
 
-
-//                // refresh gallery
-//                MediaScannerConnection.scanFile(
-//                    activity,
-//                    arrayOf(result.file.toString()),
-//                    null
-//                ) { filePath: String, uri: Uri ->
-//                    Log.i("ExternalStorage", "Scanned $filePath:")
-//                    Log.i("ExternalStorage", "-> uri=$uri")
-//                }
             }
         })
 
         fabVideo = rootView?.findViewById(R.id.fab_video)
-        fabPreview = rootView?.findViewById(R.id.fab_preview)
+//        fabPreview = rootView?.findViewById(R.id.fab_preview)
         fabPicture = rootView?.findViewById(R.id.fab_picture)
         fabFront = rootView?.findViewById(R.id.fab_front)
-        fabSave = rootView?.findViewById(R.id.save_overlay_view)
+//        fabSave = rootView?.findViewById(R.id.save_overlay_view)
         overlayVideo = rootView?.findViewById(R.id.edit_video_player)!!
         overlayVideo.visibility = View.GONE
 
         mContext = context
         preferences =
             requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
-
-
-//        ivClose.setOnClickListener {
-//            dismiss()
-//        }
-//
-//        ivDone.setOnClickListener {
-//
-//            if (videoFileOne != null && videoFileTwo != null) {
-//                dismiss()
-//
-//                //output file is generated and send to video processing
-//                val outputFile = OptiUtils.createVideoFile(requireContext())
-//                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-//
-//                OptiVideoEditor.with(requireContext())
-//                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-//                    .setFile(videoFileOne!!)
-//                    .setFileTwo(videoFileTwo!!)
-//                    .setPosition(OptiVideoEditor.TOP_LEFT)
-//                    .setOutputPath(outputFile.path)
-//                    .setCallback(this)
-//                    .main()
-//
-//                helper?.showLoading(true)
-//            } else {
-//                OptiUtils.showGlideToast(requireActivity(), getString(R.string.error_merge))
-//            }
-//        }
-
         fabVideo!!.setOnClickListener {
-
             openCamera()
         }
 
         fabPicture!!.setOnClickListener {
-
             openGallery()
         }
 
-        fabPreview!!.setOnClickListener {
-
-            showCustomDialog(
-                backGroundVideoResult!!,
-                videoUri!!,
-                videoFileTwo,
-                _xDeltaTemp,
-                _yDeltaTemp,
-                location[0],
-                location[1]
-
-            )
-
-        }
+//        fabPreview!!.setOnClickListener {
+//            showCustomDialog(
+//                backGroundVideoResult!!,
+//                videoUri!!,
+//                videoFileTwo,
+//                _xDeltaTemp,
+//                _yDeltaTemp,
+//                location[0],
+//                location[1]
+//            )
+//       }
 
         fabFront!!.setOnClickListener {
 
@@ -223,42 +162,42 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
             }
         }
 
-        fabSave!!.setOnClickListener {
-
-            if (videoFileOne != null && videoFileTwo != null) {
-                AlertDialog.Builder(requireContext())
-                    .setTitle(OptiConstant.APP_NAME)
-                    .setMessage(getString(R.string.save_video))
-                    .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
-
-
-                        dismiss()
-
-                        //output file is generated and send to video processing
-                        val outputFile = OptiUtils.createVideoFile(requireContext())
-                        Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-
-                        OptiVideoEditor.with(requireContext())
-                            .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-                            .setFile(videoFileOne!!)
-                            .setFileTwo(videoFileTwo!!)
-                            .setPosition(OptiVideoEditor.TOP_LEFT)
-                            .setVideoPosition(location[0], location[1])
-                            .setOutputPath(outputFile.path)
-                            .setCallback(this)
-                            .main()
-
-                        helper?.showLoading(true)
-                    }.setNegativeButton(R.string.cancel) { dialog, which -> }
-                    .show()
-
-
-            } else {
-                longToast(R.string.error_merge)
-            }
-
-
-        }
+//        fabSave!!.setOnClickListener {
+//
+//            if (videoFileOne != null && videoFileTwo != null) {
+//                AlertDialog.Builder(requireContext())
+//                    .setTitle(OptiConstant.APP_NAME)
+//                    .setMessage(getString(R.string.save_video))
+//                    .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
+//
+//
+//                        dismiss()
+//
+//                        //output file is generated and send to video processing
+//                        val outputFile = OptiUtils.createVideoFile(requireContext())
+//                        Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+//
+//                        OptiVideoEditor.with(requireContext())
+//                            .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+//                            .setFile(videoFileOne!!)
+//                            .setFileTwo(videoFileTwo!!)
+//                            .setPosition(OptiVideoEditor.TOP_LEFT)
+//                            .setVideoPosition(location[0], location[1])
+//                            .setOutputPath(outputFile.path)
+//                            .setCallback(this)
+//                            .main()
+//
+//                        helper?.showLoading(true)
+//                    }.setNegativeButton(R.string.cancel) { dialog, which -> }
+//                    .show()
+//
+//
+//            } else {
+//                longToast(R.string.error_merge)
+//            }
+//
+//
+//        }
     }
 
 
@@ -267,7 +206,8 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     }
 
     fun openCamera() {
-        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+//        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+        captureVideoSnapshot()
     }
 
     fun captureVideoSnapshot() {
@@ -538,7 +478,7 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
     override fun onFinish() {
         Log.v(tagName, "onFinish()")
         helper?.showLoading(false)
-        showsDialog
+//        showsDialog
 
     }
 
@@ -636,33 +576,20 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         x: Int,
         y: Int
     ) {
-
-
         helper?.showLoading(true)
-
-
         var videoResult: WeakReference<VideoResult>? = null
-
         videoResult = result?.let { WeakReference(it) }
-
         //before inflating the custom alert dialog layout, we will get the current activity viewgroup
         val viewGroup: ViewGroup = requireActivity().findViewById(android.R.id.content)
-
         //then we will inflate the custom alert dialog xml that we created
         val dialogView: View =
             LayoutInflater.from(activity).inflate(R.layout.activity_video_preview, viewGroup, false)
-
-
         //Now we need an AlertDialog.Builder object
         val builder = AlertDialog.Builder(activity)
-
         //setting the view of the builder to our custom view that we already inflated
         builder.setView(dialogView)
-
         //finally creating the alert dialog and displaying it
         val alertDialog = builder.create()
-
-
         val videoView: VideoView = dialogView!!.findViewById(R.id.video)
         val alphaMovieView: AlphaMovieView = dialogView!!.findViewById(R.id.alphaMovie)
         val fabPlay: ImageView = dialogView!!.findViewById(R.id.play_video)
@@ -674,14 +601,10 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         val result: VideoResult? =
             if (videoResult == null) null else videoResult!!.get()
 
-
-
         if (result == null) {
             dialog!!.dismiss()
             return
         }
-
-
         val controller = MediaController(activity)
         controller.setAnchorView(videoView)
         controller.setMediaPlayer(videoView)
@@ -732,14 +655,11 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
         }
 
         imgCancel!!.setOnClickListener {
-
             alertDialog.dismiss()
         }
 
         imgShare!!.setOnClickListener {
-
             if (videoFileOne != null && this.videoFileTwo != null) {
-
                 OptiMasterProcessorFragment().onAddSaveNShareSubmit(true)
                 alertDialog.dismiss();
                 dismiss()
@@ -767,7 +687,6 @@ class Temp : BottomSheetDialogFragment(), OptiDialogueHelper,
 
 
         imgSave.setOnClickListener {
-
             if (videoFileOne != null && this.videoFileTwo != null) {
 
                 OptiMasterProcessorFragment().onAddSaveNShareSubmit(false)

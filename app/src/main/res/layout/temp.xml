@@ -24,21 +24,6 @@
         android:layout_width="match_parent"
         android:layout_height="match_parent">
 
-
-        <!--        <ImageView-->
-        <!--            android:id="@+id/image_background"-->
-        <!--            android:layout_width="match_parent"-->
-        <!--            android:layout_height="wrap_content"-->
-        <!--            android:src="@drawable/court_blue"-->
-        <!--            android:adjustViewBounds="true"-->
-        <!--            android:scaleType="fitCenter"-->
-        <!--            android:contentDescription="@null"/>-->
-
-        <VideoView
-            android:id="@+id/background_video_player"
-            android:layout_width="match_parent"
-            android:layout_height="400dp" />
-
         <com.otaliastudios.cameraview.CameraView
             android:id="@+id/camera"
             android:layout_width="match_parent"
@@ -62,35 +47,8 @@
                 android:visibility="visible"
                 app:layout_drawOnPreview="true"
                 custom:accuracy="0.4"
-                custom:alphaColor="#00ff00"
-                 />
-
-
+                custom:alphaColor="#00ff00" />
         </RelativeLayout>
-
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/save_overlay_view"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_gravity="top|start"
-            android:src="@drawable/ic_download_24"
-            app:fabSize="mini"
-            android:visibility="gone"
-            android:layout_marginTop="@dimen/_16sdp"
-            android:layout_marginStart="@dimen/_16sdp"/>
-
-        <TextView
-            android:id="@+id/save_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignBottom="@+id/save_overlay_view"
-            android:gravity="center"
-            android:text="Save"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="bold"
-            android:visibility="gone" />
 
 
         <com.google.android.material.floatingactionbutton.FloatingActionButton
@@ -106,33 +64,6 @@
             app:fabSize="mini" />
 
 
-        <TextView
-            android:id="@+id/preview_text"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Preview"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="bold"
-            android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/fab_preview"
-            app:layout_constraintEnd_toEndOf="@+id/fab_preview"
-            app:layout_constraintStart_toStartOf="@+id/fab_preview" />
-
-        <com.google.android.material.floatingactionbutton.FloatingActionButton
-            android:id="@+id/fab_preview"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentStart="true"
-            android:layout_centerHorizontal="true"
-            android:layout_gravity="bottom|start"
-            android:src="@drawable/ic_preview"
-            android:visibility="gone"
-            android:layout_marginBottom="@dimen/_16sdp"
-            android:layout_marginStart="@dimen/_16sdp"
-            app:fabSize="mini" />
-
-
         <ImageView
             android:id="@+id/fab_video"
             android:layout_width="@dimen/_40sdp"
@@ -140,32 +71,18 @@
             android:layout_centerInParent="true"
             android:layout_gravity="bottom|center"
             android:layout_marginBottom="@dimen/_16sdp"
-            android:visibility="gone"
             android:src="@drawable/ic_videocam_black_24dp"
-            app:fabSize="normal" />
-
-
-        <TextView
-            android:id="@+id/overlay_video"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Overlay"
-            android:textColor="@color/black"
-            android:textSize="@dimen/_12sdp"
-            android:textStyle="bold"
             android:visibility="gone"
-            app:layout_constraintBottom_toTopOf="@+id/fab_picture"
-            app:layout_constraintEnd_toEndOf="@+id/fab_picture"
-            app:layout_constraintStart_toStartOf="@+id/fab_picture" />
+            app:fabSize="normal" />
 
         <ImageView
             android:id="@+id/fab_picture"
             android:layout_width="@dimen/_40sdp"
             android:layout_height="@dimen/_40sdp"
             android:layout_gravity="bottom|end"
-            android:src="@drawable/ic_overlay_add_24"
-            android:layout_marginBottom="@dimen/_16sdp"
             android:layout_marginEnd="@dimen/_16sdp"
+            android:layout_marginBottom="@dimen/_16sdp"
+            android:src="@drawable/ic_overlay_add_24"
             app:fabSize="normal" />
 
 

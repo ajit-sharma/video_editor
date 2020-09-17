@@ -120,18 +120,6 @@ object OptiUtils {
         return audioTrack
     }
 
-//    fun showGlideToast(activity: Activity, content: String) {
-//        GlideToast.makeToast(
-//            activity,
-//            content,
-//            GlideToast.LENGTHTOOLONG,
-//            GlideToast.FAILTOAST,
-//            GlideToast.TOP
-//        ).show()
-//
-//
-//
-//    }
 
     fun createVideoFile(context: Context): File {
         val timeStamp: String =

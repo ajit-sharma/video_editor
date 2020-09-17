@@ -32,7 +32,10 @@ import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
 import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
-import com.otaliastudios.cameraview.*
+import com.otaliastudios.cameraview.CameraListener
+import com.otaliastudios.cameraview.CameraView
+import com.otaliastudios.cameraview.PictureResult
+import com.otaliastudios.cameraview.VideoResult
 import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.lang.ref.WeakReference
@@ -103,7 +106,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     private fun initView(rootView: View?) {
 
-        CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
+//        CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
 
         viewSwitcher = rootView?.findViewById(R.id.view_switcher)!!
 
@@ -258,26 +261,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
         imgSave!!.setOnClickListener {
             doStoreVideo()
-//            if (videoFileOne != null && videoFileTwo != null) {
-//                //output file is generated and send to video processing
-//                val outputFile = OptiUtils.createVideoFile(requireContext())
-//                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
-//
-//                OptiVideoEditor.with(requireContext())
-//                    .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-//                    .setFile(videoFileOne!!)
-//                    .setFileTwo(videoFileTwo!!)
-//                    .setPosition(OptiVideoEditor.TOP_LEFT)
-//                    .setVideoPosition(location[0], location[1])
-//                    .setOutputPath(outputFile.path)
-//                    .setCallback(this)
-//                    .main()
-//            } else {
-//                longToast(R.string.error_merge)
-//            }
         }
-
-
     }
 
     fun doStoreVideo() {
@@ -342,7 +326,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
             sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
             sharingIntent.type = "video/*"
             sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-            startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+            startActivity(Intent.createChooser(sharingIntent, "Share Video Single frag Using"))
             Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
                 .show()
         }
@@ -369,7 +353,8 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     }
 
     fun openCamera() {
-        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+//        checkAllPermission(OptiConstant.PERMISSION_CAMERA)
+        captureVideoSnapshot()
     }
 
     private fun convertAviToMp4() {

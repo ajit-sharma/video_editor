@@ -229,7 +229,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
                 sharingIntent.type = "video/*"
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-                startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+                startActivity(Intent.createChooser(sharingIntent, "Share Video in Optimaster Using"))
 
 //                ShareCompat.IntentBuilder.from(activity)
 //                    .setStream(screenshotUri)
@@ -332,13 +332,11 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
                 sharingIntent.type = "video/*"
                 sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-                startActivity(Intent.createChooser(sharingIntent, "Share Image Using"))
+                startActivity(Intent.createChooser(sharingIntent, "Share Video optimaster 1 Using"))
                 Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
                     .show()
             }
-
         } else {
-
             Log.v("onFileProcessed", "saveVideo" + saveNShare)
             if (masterVideoFile != null) {
                 val outputFile = createSaveVideoFile()

@@ -279,38 +279,6 @@ class OptiVideoEditor private constructor(private val context: Context) {
             OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY -> {
 
                 Log.e("overlay", "VIDEO_CLIP_VIDEO_OVERLAY" + fixPosition)
-                //Clipart overlay on video - Need video file, image path, position to apply & output file
-//                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path, "-filter_complex","[1:v]colorkey=0x00ff00:0.01:0.03[ckout];[0:v][ckout]overlay[out]", "-map", "[out]","-vsync", "0", "-c", "copy", "-c:v","-vcodec", "libx264", "-crf", "27",
-//                    "-q", "4", "-preset", "ultrafast",  outputFile.path)
-
-//                -i master_video.mp4 -vf "movie=smaller_inner_video.mp4[inner];
-//                [in][inner] overlay=70:70 [out]" completed.mp4
-
-//                cmd = arrayOf("-y","-i", videoFile!!.path, "-i", videoFileTwo!!.path,"-filter_complex","[1:v]colorkey=0x00ff00:0.4:0.2[keyed];[1][keyed]"+fixPosition!!+"[keyed]","-map", "[keyed]", "-c:v","libx264",  "-crf",
-//                    "23","-preset", "ultrafast" ,  outputFile.path)
-
-
-//                cmd = arrayOf(
-//                    "-y",
-//                    "-i",
-//                    videoFile!!.path,
-//                    "-i",
-//                    videoFileTwo!!.path,
-//                    "-filter_complex",
-//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
-//                    "-map",
-//                    "[out]",
-//                    "-vsync",
-//                    "0",
-//                    "-r", "20",
-//                    "-b:v","1000k",
-//                    "-c:v",
-//                    "libx264",
-//                    "-preset",
-//                    "ultrafast",
-//                    outputFile.path
-//                )
-
                   cmd = arrayOf(
                     "-y",//
                     "-i",//input
@@ -319,6 +287,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     videoFileTwo!!.path,
                     "-filter_complex", //filter
                     "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
+//                 "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
                     "-map",//merge
                     "[out]",// output
                     "-vsync",// necessary to prevent same frame to process
