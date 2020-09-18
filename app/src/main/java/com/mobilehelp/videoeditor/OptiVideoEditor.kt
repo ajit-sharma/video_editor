@@ -279,15 +279,15 @@ class OptiVideoEditor private constructor(private val context: Context) {
             OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY -> {
 
                 Log.e("overlay", "VIDEO_CLIP_VIDEO_OVERLAY" + fixPosition)
-                  cmd = arrayOf(
+                cmd = arrayOf(
                     "-y",//
                     "-i",//input
                     videoFile!!.path,
                     "-i", // input
                     videoFileTwo!!.path,
                     "-filter_complex", //filter
-                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
-//                 "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
+//                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]overlay=(W-w)/2:(H-h)/2[out]", //colorkey = which color:0.4=similarity:0.2= blend; [0:v]= 1st video,
+                    "[1:v]colorkey=0x00ff00:0.4:0.2[ckout];[0:v][ckout]" + fixPosition!! + "[out]",
                     "-map",//merge
                     "[out]",// output
                     "-vsync",// necessary to prevent same frame to process

@@ -11,6 +11,7 @@ import android.graphics.Point
 import android.net.Uri
 import android.os.Build
 import android.os.Bundle
+import android.os.Environment
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -19,7 +20,6 @@ import android.widget.*
 import androidx.core.app.ActivityCompat
 import androidx.core.content.ContextCompat
 import androidx.core.content.FileProvider
-import androidx.fragment.app.Fragment
 import com.google.android.exoplayer2.*
 import com.google.android.exoplayer2.source.TrackGroupArray
 import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
@@ -39,9 +39,10 @@ import com.otaliastudios.cameraview.VideoResult
 import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.lang.ref.WeakReference
+import java.text.SimpleDateFormat
 import java.util.*
 
-class SingleFragment : Fragment(), OptiVideoOptionListener,
+class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     OptiFFMpegCallback, View.OnTouchListener, BaseFragment.CallBacks {
 
     private var tagName: String = SingleFragment::class.java.simpleName
@@ -92,6 +93,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     private var pbLoading: ProgressBar? = null
     private var exoPlayer: SimpleExoPlayer? = null
     private var playWhenReady: Boolean? = false
+    private var outputFile: File? = null
 
 
     override fun onCreateView(
@@ -106,7 +108,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
     private fun initView(rootView: View?) {
 
-//        CameraLogger.setLogLevel(CameraLogger.LEVEL_VERBOSE)
 
         viewSwitcher = rootView?.findViewById(R.id.view_switcher)!!
 
@@ -224,6 +225,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
         videoView!!.setMediaController(controller)
         videoView!!.setVideoURI(Uri.fromFile(result!!.file))
         alphaMovieView!!.setVideoFromUri(requireContext(), videoUri)
+        alphaMovieView!!.start()
 
         alphaMovieView!!.animate()
             .x(_xDeltaTemp)
@@ -258,33 +260,150 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
 
         }
 
-
         imgSave!!.setOnClickListener {
             doStoreVideo()
+//            if (FFmpeg.getInstance(requireContext()).isFFmpegCommandRunning) {
+//
+//
+//            } else {
+//
+//
+//                AlertDialog.Builder(requireContext())
+//                    .setTitle(OptiConstant.APP_NAME)
+//                    .setMessage(getString(R.string.save_video))
+//                    .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
+//                        if (masterVideoFile != null) {
+//                            val outputFile = createSaveVideoFile()
+//                            OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+//                            Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
+//                                .show()
+//                            OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+//                        }
+//                    }
+//                    .setNegativeButton(R.string.cancel) { dialog, which -> }
+//                    .show()
+//            }
+
+
         }
+
+        imgCancel!!.setOnClickListener {
+
+            if (!isRunning()) {
+                viewSwitcher.showPrevious()
+                masterVideoFile = null
+                outputFile = null
+                overlayVideo.stop()
+                overlayVideo.visibility = View.GONE
+                videoView!!.stopPlayback()
+                camera!!.onFinishTemporaryDetach()
+            } else {
+
+                stopRunningProcess()
+                viewSwitcher.showPrevious()
+                masterVideoFile = null
+                outputFile = null
+                overlayVideo.stop()
+                overlayVideo.visibility = View.GONE
+                videoView!!.stopPlayback()
+
+            }
+        }
+
+
+        imgShare!!.setOnClickListener {
+            if (masterVideoFile != null) {
+
+                val screenshotUri = Uri.fromFile(masterVideoFile)
+
+                val file = File("File Path")
+                val apkURI = FileProvider.getUriForFile(
+                    requireActivity(), requireActivity().packageName.toString() + ".provider",
+                    masterVideoFile!!
+                )
+                val sharingIntent = Intent(Intent.ACTION_SEND)
+                sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+                sharingIntent.type = "video/*"
+                sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
+                startActivity(Intent.createChooser(sharingIntent, "Share Video Using"))
+
+
+            }
+        }
+    }
+
+
+    private fun createSaveVideoFile(): File {
+        val timeStamp: String =
+            SimpleDateFormat(OptiConstant.DATE_FORMAT, Locale.getDefault()).format(Date())
+        val imageFileName: String = OptiConstant.APP_NAME + timeStamp + "_"
+
+        val path =
+            Environment.getExternalStorageDirectory()
+                .toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.MY_VIDEOS + File.separator
+        val folder = File(path)
+        if (!folder.exists())
+            folder.mkdirs()
+
+        return File.createTempFile(imageFileName, OptiConstant.VIDEO_FORMAT, folder)
     }
 
     fun doStoreVideo() {
 
-        if (videoFileOne != null && videoFileTwo != null) {
-            //output file is generated and send to video processing
-            val outputFile = OptiUtils.createVideoFile(requireContext())
-            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+        if (!isRunning()) {
 
-            OptiVideoEditor.with(requireContext())
-                .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
-                .setFile(videoFileOne!!)
-                .setFileTwo(videoFileTwo!!)
-                .setPosition(OptiVideoEditor.TOP_LEFT)
-                .setVideoPosition(location[0], location[1])
-                .setOutputPath(outputFile.path)
-                .setCallback(this)
-                .main()
-//            helper?.showLoading(true)
+            if (outputFile != null) {
 
+                longToast("File Already Saved!")
+
+            } else if (masterVideoFile != null) {
+
+                outputFile = createSaveVideoFile()
+                OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+
+                OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())
+                onComplete("Saved Successfully...", true)
+
+            } else {
+
+                if (videoFileOne != null && videoFileTwo != null) {
+                    //output file is generated and send to video processing
+                    val outputFile = OptiUtils.createVideoFile(requireContext())
+                    Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+
+                    OptiVideoEditor.with(requireContext())
+                        .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                        .setFile(videoFileOne!!)
+                        .setFileTwo(videoFileTwo!!)
+                        .setPosition(OptiVideoEditor.TOP_LEFT)
+                        .setVideoPosition(location[0], location[1])
+                        .setOutputPath(outputFile.path)
+                        .setCallback(this)
+                        .main()
+
+
+                } else {
+                    longToast(R.string.error_merge)
+                }
+
+            }
 
         } else {
-            longToast(R.string.error_merge)
+
+
+            if (masterVideoFile != null) {
+
+                val outputFile = createSaveVideoFile()
+                OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
+                    .show()
+                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+                onComplete("Saved Successfully...", true)
+            } else {
+
+                showInProgressToast("Video In Process....")
+            }
+
         }
 
 
@@ -308,30 +427,6 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
             currentWindow = 0
             initializePlayer()
         }
-
-
-
-
-        if (masterVideoFile != null) {
-
-            val screenshotUri = Uri.fromFile(masterVideoFile)
-
-            val file = File("File Path")
-            val apkURI = FileProvider.getUriForFile(
-                requireActivity(), requireActivity().packageName.toString() + ".provider",
-                masterVideoFile!!
-            )
-
-            val sharingIntent = Intent(Intent.ACTION_SEND)
-            sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-            sharingIntent.type = "video/*"
-            sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-            startActivity(Intent.createChooser(sharingIntent, "Share Video Single frag Using"))
-            Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
-                .show()
-        }
-
-
     }
 
     override fun getFile(): File? {
@@ -633,7 +728,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     }
 
     override fun onProgress(progress: String) {
-        Toast.makeText(mContext, "onProgress()", Toast.LENGTH_LONG).show()
+//        Toast.makeText(mContext, "onProgress()", Toast.LENGTH_LONG).show()
     }
 
     override fun onSuccess(convertedFile: File, type: String) {
@@ -651,6 +746,7 @@ class SingleFragment : Fragment(), OptiVideoOptionListener,
     }
 
     override fun onFinish() {
+        onComplete("Save Successfully!", false)
         Toast.makeText(mContext, "onFinish()", Toast.LENGTH_LONG).show()
     }
 

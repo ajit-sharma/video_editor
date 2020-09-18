@@ -201,7 +201,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                         OptiCommonMethods.copyFile(masterVideoFile, outputFile)
                         Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                             .show()
-                        OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+//                        OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
                         tvSave!!.visibility = View.GONE
                         tvShare!!.visibility = View.VISIBLE
                     }
@@ -320,21 +320,31 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
 
             if (masterVideoFile != null) {
 
-                val screenshotUri = Uri.fromFile(masterVideoFile)
+                if (masterVideoFile != null) {
+                    val outputFile = createSaveVideoFile()
+                    OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                    Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
+                        .show()
+                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
 
-                val file = File("File Path")
-                val apkURI = FileProvider.getUriForFile(
-                    requireActivity(), requireActivity().packageName.toString() + ".provider",
-                    masterVideoFile!!
-                )
+                }
 
-                val sharingIntent = Intent(Intent.ACTION_SEND)
-                sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
-                sharingIntent.type = "video/*"
-                sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
-                startActivity(Intent.createChooser(sharingIntent, "Share Video optimaster 1 Using"))
-                Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
-                    .show()
+
+//                val screenshotUri = Uri.fromFile(masterVideoFile)
+//
+//                val file = File("File Path")
+//                val apkURI = FileProvider.getUriForFile(
+//                    requireActivity(), requireActivity().packageName.toString() + ".provider",
+//                    masterVideoFile!!
+//                )
+//
+//                val sharingIntent = Intent(Intent.ACTION_SEND)
+//                sharingIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_WHEN_TASK_RESET)
+//                sharingIntent.type = "video/*"
+//                sharingIntent.putExtra(Intent.EXTRA_STREAM, apkURI)
+//                startActivity(Intent.createChooser(sharingIntent, "Share Video optimaster 1 Using"))
+//                Toast.makeText(context, R.string.successfully_share, Toast.LENGTH_SHORT)
+//                    .show()
             }
         } else {
             Log.v("onFileProcessed", "saveVideo" + saveNShare)
@@ -343,7 +353,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
                 OptiCommonMethods.copyFile(masterVideoFile, outputFile)
                 Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                     .show()
-                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+//                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
 
             }
 
