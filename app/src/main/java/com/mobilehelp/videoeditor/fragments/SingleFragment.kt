@@ -174,27 +174,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                     doStoreVideo()
 
                 }
-
-//                    videoResult = result?.let { WeakReference(file) }
-//
-//                    OptiVideoPreviewFragment.newInstance().apply {
-//                        setVideoResult(
-//                            file, videoUri, videoFileTwo, _xDeltaTemp, _yDeltaTemp
-//                        )
-//
-//                    }.show(requireFragmentManager(), "OptiVideoPreviewFragment")
             }
-
-
-//                // refresh gallery
-//                MediaScannerConnection.scanFile(
-//                    activity,
-//                    arrayOf(result.file.toString()),
-//                    null
-//                ) { filePath: String, uri: Uri ->
-//                    Log.i("ExternalStorage", "Scanned $filePath:")
-//                    Log.i("ExternalStorage", "-> uri=$uri")
-//                }
 
         })
 
@@ -279,30 +259,8 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
         }
 
         imgSave!!.setOnClickListener {
+
             doStoreVideo()
-//            if (FFmpeg.getInstance(requireContext()).isFFmpegCommandRunning) {
-//
-//
-//            } else {
-//
-//
-//                AlertDialog.Builder(requireContext())
-//                    .setTitle(OptiConstant.APP_NAME)
-//                    .setMessage(getString(R.string.save_video))
-//                    .setPositiveButton(getString(R.string.Continue)) { dialog, which ->
-//                        if (masterVideoFile != null) {
-//                            val outputFile = createSaveVideoFile()
-//                            OptiCommonMethods.copyFile(masterVideoFile, outputFile)
-//                            Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
-//                                .show()
-//                            OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
-//                        }
-//                    }
-//                    .setNegativeButton(R.string.cancel) { dialog, which -> }
-//                    .show()
-//            }
-
-
         }
 
         imgCancel!!.setOnClickListener {
@@ -424,16 +382,16 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
             if (masterVideoFile != null) {
 
-                val outputFile = createSaveVideoFile()
+                outputFile = createSaveVideoFile()
                 OptiCommonMethods.copyFile(masterVideoFile, outputFile)
                 Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                     .show()
-                OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+                OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())
                 onComplete("Saved Successfully...", true)
             } else {
 
-//                startRepeatingTask()
                 showInProgressToast("Video In Process....")
+                startRepeatingTask()
 
             }
 
@@ -492,13 +450,13 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             .setMessage(getString(R.string.not_supported_video))
             .setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 //output file is generated and send to video processing
-                val outputFile = OptiUtils.createVideoFile(requireContext())
-                Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+                outputFile = OptiUtils.createVideoFile(requireContext())
+                Log.v(tagName, "outputFile: ${outputFile!!.absolutePath}")
 
                 OptiVideoEditor.with(requireContext())
                     .setType(OptiConstant.CONVERT_AVI_TO_MP4)
                     .setFile(masterVideoFile!!)
-                    .setOutputPath(outputFile.path)
+                    .setOutputPath(outputFile!!.path)
                     .setCallback(this)
                     .main()
 
@@ -542,15 +500,15 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
         if (videoFileTwo != null) {
 
 //            //output file is generated and send to video processing
-            val outputFile = OptiUtils.createVideoFile(requireContext())
-            Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
+            outputFile = OptiUtils.createVideoFile(requireContext())
+            Log.v(tagName, "outputFile: ${outputFile!!.absolutePath}")
 
             OptiVideoEditor.with(requireContext())
                 .setType(OptiConstant.VIDEO_CLIP_ART_OVERLAY)
                 .setFile(videoFileTwo)
                 .setPosition(OptiVideoEditor.TOP_LEFT)
                 .setVideoPosition(location[0], location[1])
-                .setOutputPath(outputFile.path)
+                .setOutputPath(outputFile!!.path)
                 .setCallback(this)
                 .main()
 
@@ -780,7 +738,6 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
     override fun onFinish() {
         onComplete("Save Successfully!", false)
-        Toast.makeText(mContext, "onFinish()", Toast.LENGTH_LONG).show()
     }
 
     override fun onTouch(v: View?, event: MotionEvent?): Boolean {
@@ -916,23 +873,34 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     }
 
     var mStatusChecker: Runnable = object : Runnable {
+
+
         override fun run() {
             try {
+
                 if (masterVideoFile != null) {
 
-                    val outputFile = createSaveVideoFile()
+                    outputFile = createSaveVideoFile()
                     OptiCommonMethods.copyFile(masterVideoFile, outputFile)
                     Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                         .show()
-                    OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+                    OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())
                     onComplete("Saved Successfully...", true)
-                    stopRepeatingTask()
+
                 }
                 //this function can change value of mInterval.
             } finally {
+
+                if (masterVideoFile != null) {
+
+                    stopRepeatingTask()
+                } else {
+                    mHandler!!.postDelayed(this, mInterval)
+                }
                 // 100% guarantee that this always happens, even if
                 // your update method throws an exception
-                mHandler!!.postDelayed(this, mInterval)
+
+
             }
         }
     }
