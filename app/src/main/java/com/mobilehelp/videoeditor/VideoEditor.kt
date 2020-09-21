@@ -12,18 +12,18 @@ import android.util.Log
 import com.github.hiteshsondhi88.libffmpeg.ExecuteBinaryResponseHandler
 import com.github.hiteshsondhi88.libffmpeg.FFmpeg
 import com.github.hiteshsondhi88.libffmpeg.exceptions.FFmpegCommandAlreadyRunningException
-import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
-import com.mobilehelp.videoeditor.utils.OptiConstant
-import com.mobilehelp.videoeditor.utils.OptiOutputType
+import com.mobilehelp.videoeditor.interfaces.FFMpegCallback
+import com.mobilehelp.videoeditor.utils.Constant
+import com.mobilehelp.videoeditor.utils.OutputType
 import java.io.File
 import java.io.IOException
 
-class OptiVideoEditor private constructor(private val context: Context) {
+class VideoEditor private constructor(private val context: Context) {
 
-    private var tagName: String = OptiVideoEditor::class.java.simpleName
+    private var tagName: String = VideoEditor::class.java.simpleName
     private var videoFile: File? = null
     private var videoFileTwo: File? = null
-    private var callback: OptiFFMpegCallback? = null
+    private var callback: FFMpegCallback? = null
     private var outputFilePath = ""
     private var type: Int? = null
     private var _xDelta: Int? = null
@@ -56,13 +56,13 @@ class OptiVideoEditor private constructor(private val context: Context) {
     private var filterCommand: String? = null
 
     companion object {
-        lateinit var abc: OptiVideoEditor
-        fun with(context: Context): OptiVideoEditor {
-            abc = OptiVideoEditor(context)
+        lateinit var abc: VideoEditor
+        fun with(context: Context): VideoEditor {
+            abc = VideoEditor(context)
             return abc
         }
 
-        fun getInstance(): OptiVideoEditor {
+        fun getInstance(): VideoEditor {
             return abc
         }
 
@@ -84,74 +84,74 @@ class OptiVideoEditor private constructor(private val context: Context) {
         var CENTER_ALLIGN = "overlay=(W-w)/2:(H-h)/2"
     }
 
-    fun setType(type: Int): OptiVideoEditor {
+    fun setType(type: Int): VideoEditor {
         this.type = type
         return this
     }
 
-    fun setFile(file: File): OptiVideoEditor {
+    fun setFile(file: File): VideoEditor {
         this.videoFile = file
         return this
     }
 
-    fun setFileTwo(file: File): OptiVideoEditor {
+    fun setFileTwo(file: File): VideoEditor {
         this.videoFileTwo = file
         return this
     }
 
-    fun setVideoPosition(x: Int, y: Int): OptiVideoEditor {
+    fun setVideoPosition(x: Int, y: Int): VideoEditor {
         _xDelta = x
         _yDelta = y
         fixPosition = "overlay=" + _xDelta + ":" + _yDelta
         return this
     }
 
-    fun setAudioFile(file: File): OptiVideoEditor {
+    fun setAudioFile(file: File): VideoEditor {
         this.audioFile = file
         return this
     }
 
-    fun setCallback(callback: OptiFFMpegCallback): OptiVideoEditor {
+    fun setCallback(callback: FFMpegCallback): VideoEditor {
         this.callback = callback
         return this
     }
 
-    fun setImagePath(imagePath: String): OptiVideoEditor {
+    fun setImagePath(imagePath: String): VideoEditor {
         this.imagePath = imagePath
         return this
     }
 
-    fun setOutputPath(outputPath: String): OptiVideoEditor {
+    fun setOutputPath(outputPath: String): VideoEditor {
         this.outputFilePath = outputPath
         return this
     }
 
-    fun setFont(font: File): OptiVideoEditor {
+    fun setFont(font: File): VideoEditor {
         this.font = font
         return this
     }
 
-    fun setText(text: String): OptiVideoEditor {
+    fun setText(text: String): VideoEditor {
         this.text = text
         return this
     }
 
-    fun setPosition(position: String): OptiVideoEditor {
+    fun setPosition(position: String): VideoEditor {
         this.position = position
         return this
     }
 
-    fun setColor(color: String): OptiVideoEditor {
+    fun setColor(color: String): VideoEditor {
         this.color = color
         return this
     }
 
-    fun setSize(size: String): OptiVideoEditor {
+    fun setSize(size: String): VideoEditor {
         this.size = size
         return this
     }
 
-    fun addBorder(isBorder: Boolean): OptiVideoEditor {
+    fun addBorder(isBorder: Boolean): VideoEditor {
         if (isBorder)
             this.border = BORDER_FILLED
         else
@@ -159,12 +159,12 @@ class OptiVideoEditor private constructor(private val context: Context) {
         return this
     }
 
-    fun setIsHavingAudio(havingAudio: Boolean): OptiVideoEditor {
+    fun setIsHavingAudio(havingAudio: Boolean): VideoEditor {
         this.havingAudio = havingAudio
         return this
     }
 
-    fun setSpeedTempo(playbackSpeed: String, tempo: String): OptiVideoEditor {
+    fun setSpeedTempo(playbackSpeed: String, tempo: String): VideoEditor {
         this.ffmpegFS =
             if (havingAudio) "[0:v]setpts=$playbackSpeed*PTS[v];[0:a]atempo=$tempo[a]"
             else
@@ -173,23 +173,23 @@ class OptiVideoEditor private constructor(private val context: Context) {
         return this
     }
 
-    fun setStartTime(startTime: String): OptiVideoEditor {
+    fun setStartTime(startTime: String): VideoEditor {
         this.startTime = startTime
         return this
     }
 
-    fun setEndTime(endTime: String): OptiVideoEditor {
+    fun setEndTime(endTime: String): VideoEditor {
         this.endTime = endTime
         return this
     }
 
-    fun setFilter(filter: String): OptiVideoEditor {
+    fun setFilter(filter: String): VideoEditor {
         this.filterCommand = filter
         return this
     }
 
     fun main() {
-        if (type == OptiConstant.AUDIO_TRIM) {
+        if (type == Constant.AUDIO_TRIM) {
             if (audioFile == null || !audioFile!!.exists()) {
                 callback!!.onFailure(IOException("File not exists"))
                 return
@@ -215,12 +215,12 @@ class OptiVideoEditor private constructor(private val context: Context) {
         var cmd: Array<String>? = null
 
         when (type) {
-            OptiConstant.VIDEO_FLIRT -> {
+            Constant.VIDEO_FLIRT -> {
                 //Video filter - Need video file, filter command & output file
                 cmd = arrayOf("-y", "-i", videoFile!!.path, "-vf", filterCommand!!, outputFile.path)
             }
 
-            OptiConstant.VIDEO_TEXT_OVERLAY -> {
+            Constant.VIDEO_TEXT_OVERLAY -> {
                 //Text overlay on video - Need video file, font file, text, text color, text size, border if needed, position to apply & output file
                 cmd = arrayOf(
                     "-y", "-i", videoFile!!.path, "-vf",
@@ -229,7 +229,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.VIDEO_CLIP_ART_OVERLAY -> {
+            Constant.VIDEO_CLIP_ART_OVERLAY -> {
                 //Clipart overlay on video - Need video file, image path, position to apply & output file
 //                cmd = arrayOf(
 //                    "-y",
@@ -276,7 +276,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY -> {
+            Constant.VIDEO_CLIP_VIDEO_OVERLAY -> {
 
                 Log.e("overlay", "VIDEO_CLIP_VIDEO_OVERLAY" + fixPosition)
                 cmd = arrayOf(
@@ -335,7 +335,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             }
 
-            OptiConstant.MERGE_VIDEO -> {
+            Constant.MERGE_VIDEO -> {
                 //Merge videos - Need two video file, approx video size & output file
 //                cmd = arrayOf(
 //                    "-y",
@@ -364,7 +364,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
 
             }
 
-            OptiConstant.VIDEO_PLAYBACK_SPEED -> {
+            Constant.VIDEO_PLAYBACK_SPEED -> {
                 //Video playback speed - Need video file, speed & tempo value according to playback and output file
                 cmd = if (havingAudio) {
                     arrayOf(
@@ -384,7 +384,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 }
             }
 
-            OptiConstant.AUDIO_TRIM -> {
+            Constant.AUDIO_TRIM -> {
                 //Audio trim - Need audio file, start time, end time & output file
                 cmd = arrayOf(
                     "-y",
@@ -400,7 +400,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.VIDEO_AUDIO_MERGE -> {
+            Constant.VIDEO_AUDIO_MERGE -> {
                 //Video audio merge - Need audio file, video file & output file
                 cmd = arrayOf(
                     "-y",
@@ -418,7 +418,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.VIDEO_TRIM -> {
+            Constant.VIDEO_TRIM -> {
                 //Video trim - Need video file, start time, end time & output file
 //                ffmpeg -i 1.mp4 -f gdigrab -framerate 25 -video_size 300x200 -i title="MyWindow"
 //
@@ -440,7 +440,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.VIDEO_TRANSITION -> {
+            Constant.VIDEO_TRANSITION -> {
                 //Video transition - Need video file, transition command & output file
                 cmd = arrayOf(
                     "-y",
@@ -454,7 +454,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 )
             }
 
-            OptiConstant.CONVERT_AVI_TO_MP4 -> {
+            Constant.CONVERT_AVI_TO_MP4 -> {
                 //Convert .avi to .mp4 - Need avi video file, command, mp4 output file
                 cmd = arrayOf(
                     "-y",
@@ -475,7 +475,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                     outputFile.path
                 )
             }
-            OptiConstant.VIDEO_REMOVE_CHROMA -> {
+            Constant.VIDEO_REMOVE_CHROMA -> {
                 //remove chroma key only -i input.mp4 -vf "chromakey=0x00ff00:0.1:0.2" -c copy -c:v png output.mov
                 cmd = arrayOf(
                     "-y",
@@ -504,7 +504,7 @@ class OptiVideoEditor private constructor(private val context: Context) {
                 }
 
                 override fun onSuccess(message: String?) {
-                    callback!!.onSuccess(outputFile, OptiOutputType.TYPE_VIDEO)
+                    callback!!.onSuccess(outputFile, OutputType.TYPE_VIDEO)
                 }
 
                 override fun onFailure(message: String?) {

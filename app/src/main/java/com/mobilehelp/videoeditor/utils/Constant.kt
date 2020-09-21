@@ -9,7 +9,7 @@ package com.mobilehelp.videoeditor.utils
 
 import android.Manifest
 
-class OptiConstant {
+class Constant {
     companion object {
 
         const val APP_NAME = "SaregamaEditor"

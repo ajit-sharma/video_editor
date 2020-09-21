@@ -18,9 +18,9 @@ import java.io.*;
 import java.nio.channels.FileChannel;
 import java.util.concurrent.TimeUnit;
 
-public class OptiCommonMethods {
+public class CommonMethods {
 
-    private static String tagName = OptiCommonMethods.class.getSimpleName();
+    private static String tagName = CommonMethods.class.getSimpleName();
 
     //write intent data into file
     public static File writeIntoFile(Context context, Intent data, File file) {

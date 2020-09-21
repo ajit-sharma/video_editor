@@ -41,9 +41,6 @@ dependencies {
     implementation 'androidx.navigation:navigation-fragment-ktx:2.3.0'
     implementation 'androidx.navigation:navigation-ui-ktx:2.3.0'
     implementation "org.jetbrains.anko:anko:$anko_version"
-//    testImplementation 'junit:junit:4.12'
-//    androidTestImplementation 'androidx.test.ext:junit:1.1.1'
-//    androidTestImplementation 'androidx.test.espresso:espresso-core:3.2.0'
 
 
     //exoplayer
@@ -52,31 +49,16 @@ dependencies {
     implementation "com.google.android.exoplayer:exoplayer-ui:${exoPlayer}"
 
     //ffmpeg
-//    implementation "com.writingminds:FFmpegAndroid:${FFmpeg}"
-//    implementation group: 'com.writingminds', name: 'FFmpegAndroid', version: '0.3.2'
     implementation 'com.writingminds:FFmpegAndroid:0.3.2'
-//    implementation 'com.github.WritingMinds:ffmpeg-android:v0.3.0'
-//    implementation "org.jcodec:jcodec-android:0.2.5"
-
-    //seekbar
-    implementation "com.github.guilhe:seekbar-ranged-view:${seekbar}"
 
     //textSize
     implementation "com.intuit.sdp:sdp-android:${sdpSize}"
 
-    //GlideToast
-//    implementation "com.github.imjeevandeshmukh:GlideToast:${GlideToast}"
 
     // CameraView
     implementation 'com.otaliastudios:cameraview:2.2.0'
     implementation 'androidx.cardview:cardview:1.0.0'
 
-//    implementation 'org.mp4parser:isoparser:1.9.41'
-//    implementation 'com.charonchui.vitamio:vitamio:4.2.2'
-
-//    implementation 'com.arthenica:mobile-ffmpeg-full:4.4'
-    //fresco
-//    implementation "com.facebook.fresco:fresco:${fresco}"
 
 
 }

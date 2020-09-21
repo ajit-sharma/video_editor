@@ -5,8 +5,10 @@
  *
  */
 
-package com.mobilehelp.videoeditor.interfaces
+package com.mobilehelp.videoeditor.utils
 
-interface OptiFilterListener {
-    fun selectedFilter(filter: String)
+class OutputType {
+    companion object {
+        var TYPE_VIDEO = "video"
+    }
 }

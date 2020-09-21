@@ -9,7 +9,7 @@ package com.mobilehelp.videoeditor.interfaces
 
 import java.io.File
 
-interface OptiFFMpegCallback {
+interface FFMpegCallback {
 
     fun onProgress(progress: String)
 

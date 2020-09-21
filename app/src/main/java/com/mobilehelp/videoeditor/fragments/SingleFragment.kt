@@ -27,11 +27,10 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mobilehelp.videoeditor.OptiVideoEditor
+import com.mobilehelp.videoeditor.VideoEditor
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
-import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
-import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
+import com.mobilehelp.videoeditor.interfaces.FFMpegCallback
 import com.mobilehelp.videoeditor.utils.*
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraView
@@ -45,8 +44,8 @@ import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SingleFragment : BaseFragment(), OptiVideoOptionListener,
-    OptiFFMpegCallback, View.OnTouchListener, BaseFragment.CallBacks {
+class SingleFragment : BaseFragment(),
+    FFMpegCallback, View.OnTouchListener, BaseFragment.CallBacks {
 
     private var tagName: String = SingleFragment::class.java.simpleName
 
@@ -325,17 +324,17 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
     private fun createSaveVideoFile(): File {
         val timeStamp: String =
-            SimpleDateFormat(OptiConstant.DATE_FORMAT, Locale.getDefault()).format(Date())
-        val imageFileName: String = OptiConstant.APP_NAME + timeStamp + "_"
+            SimpleDateFormat(Constant.DATE_FORMAT, Locale.getDefault()).format(Date())
+        val imageFileName: String = Constant.APP_NAME + timeStamp + "_"
 
         val path =
             Environment.getExternalStorageDirectory()
-                .toString() + File.separator + OptiConstant.APP_NAME + File.separator + OptiConstant.MY_VIDEOS + File.separator
+                .toString() + File.separator + Constant.APP_NAME + File.separator + Constant.MY_VIDEOS + File.separator
         val folder = File(path)
         if (!folder.exists())
             folder.mkdirs()
 
-        return File.createTempFile(imageFileName, OptiConstant.VIDEO_FORMAT, folder)
+        return File.createTempFile(imageFileName, Constant.VIDEO_FORMAT, folder)
     }
 
     fun doStoreVideo() {
@@ -349,7 +348,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             } else if (masterVideoFile != null) {
 
                 outputFile = createSaveVideoFile()
-                OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                CommonMethods.copyFile(masterVideoFile, outputFile)
 
                 OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())
                 onComplete("Saved Successfully...", true)
@@ -361,11 +360,11 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                     val outputFile = OptiUtils.createVideoFile(requireContext())
                     Log.v(tagName, "outputFile: ${outputFile.absolutePath}")
 
-                    OptiVideoEditor.with(requireContext())
-                        .setType(OptiConstant.VIDEO_CLIP_VIDEO_OVERLAY)
+                    VideoEditor.with(requireContext())
+                        .setType(Constant.VIDEO_CLIP_VIDEO_OVERLAY)
                         .setFile(videoFileOne!!)
                         .setFileTwo(videoFileTwo!!)
-                        .setPosition(OptiVideoEditor.TOP_LEFT)
+                        .setPosition(VideoEditor.TOP_LEFT)
                         .setVideoPosition(location[0], location[1])
                         .setOutputPath(outputFile.path)
                         .setCallback(this)
@@ -383,7 +382,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             if (masterVideoFile != null) {
 
                 outputFile = createSaveVideoFile()
-                OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                CommonMethods.copyFile(masterVideoFile, outputFile)
                 Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                     .show()
                 OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())
@@ -408,10 +407,10 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     override fun onFileProcessed(file: File) {
         masterVideoFile = file
 
-        val extension = OptiCommonMethods.getFileExtension(masterVideoFile!!.absolutePath)
+        val extension = CommonMethods.getFileExtension(masterVideoFile!!.absolutePath)
 
         //check video format before playing into exoplayer
-        if (extension == OptiConstant.AVI_FORMAT) {
+        if (extension == Constant.AVI_FORMAT) {
             convertAviToMp4() //avi format is not supported in exoplayer
         } else {
             playbackPosition = 0
@@ -435,7 +434,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     }
 
     fun openGallery() {
-        checkPermission(OptiConstant.VIDEO_MERGE_2, Manifest.permission.READ_EXTERNAL_STORAGE)
+        checkPermission(Constant.VIDEO_MERGE_2, Manifest.permission.READ_EXTERNAL_STORAGE)
     }
 
     fun openCamera() {
@@ -446,15 +445,15 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     private fun convertAviToMp4() {
 
         AlertDialog.Builder(requireContext())
-            .setTitle(OptiConstant.APP_NAME)
+            .setTitle(Constant.APP_NAME)
             .setMessage(getString(R.string.not_supported_video))
             .setPositiveButton(getString(R.string.yes)) { dialog, which ->
                 //output file is generated and send to video processing
                 outputFile = OptiUtils.createVideoFile(requireContext())
                 Log.v(tagName, "outputFile: ${outputFile!!.absolutePath}")
 
-                OptiVideoEditor.with(requireContext())
-                    .setType(OptiConstant.CONVERT_AVI_TO_MP4)
+                VideoEditor.with(requireContext())
+                    .setType(Constant.CONVERT_AVI_TO_MP4)
                     .setFile(masterVideoFile!!)
                     .setOutputPath(outputFile!!.path)
                     .setCallback(this)
@@ -503,10 +502,10 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             outputFile = OptiUtils.createVideoFile(requireContext())
             Log.v(tagName, "outputFile: ${outputFile!!.absolutePath}")
 
-            OptiVideoEditor.with(requireContext())
-                .setType(OptiConstant.VIDEO_CLIP_ART_OVERLAY)
+            VideoEditor.with(requireContext())
+                .setType(Constant.VIDEO_CLIP_ART_OVERLAY)
                 .setFile(videoFileTwo)
-                .setPosition(OptiVideoEditor.TOP_LEFT)
+                .setPosition(VideoEditor.TOP_LEFT)
                 .setVideoPosition(location[0], location[1])
                 .setOutputPath(outputFile!!.path)
                 .setCallback(this)
@@ -536,14 +535,14 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
         when (requestCode) {
 
-            OptiConstant.VIDEO_MERGE_2 -> {
+            Constant.VIDEO_MERGE_2 -> {
                 data?.let {
                     videoUri = it.data
                     overlayVideo.visibility = View.VISIBLE
                     overlayVideo.setVideoFromUri(mContext, videoUri)
                     overlayVideo.start()
                     fabVideo!!.visibility = View.VISIBLE
-                    setFilePath(resultCode, it, OptiConstant.VIDEO_MERGE_2)
+                    setFilePath(resultCode, it, Constant.VIDEO_MERGE_2)
                 }
             }
         }
@@ -564,12 +563,12 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                         .getColumnIndex(filePathColumn[0])
                     val filePath = cursor.getString(columnIndex)
                     cursor.close()
-                    if (mode == OptiConstant.VIDEO_MERGE_1) {
+                    if (mode == Constant.VIDEO_MERGE_1) {
                         videoFileOne = File(filePath)
                         Log.v(tagName, "videoFileOne: " + videoFileOne!!.absolutePath)
 
 
-                    } else if (mode == OptiConstant.VIDEO_MERGE_2) {
+                    } else if (mode == Constant.VIDEO_MERGE_2) {
                         videoFileTwo = File(filePath)
                     }
                 }
@@ -591,7 +590,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     ) {
         super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         when (requestCode) {
-            OptiConstant.VIDEO_MERGE_1 -> {
+            Constant.VIDEO_MERGE_1 -> {
 
                 for (permission in permissions) {
                     if (ActivityCompat.shouldShowRequestPermissionRationale(
@@ -618,7 +617,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
             }
 
-            OptiConstant.VIDEO_MERGE_2 -> {
+            Constant.VIDEO_MERGE_2 -> {
 
 
                 for (permission in permissions) {
@@ -641,7 +640,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                             )
                             i.setType("video/*")
                             i.putExtra(Intent.EXTRA_MIME_TYPES, arrayOf("video/*"))
-                            startActivityForResult(i, OptiConstant.VIDEO_MERGE_2)
+                            startActivityForResult(i, Constant.VIDEO_MERGE_2)
                         } else {
                             callPermissionSettings()
                         }
@@ -707,7 +706,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             if (isBlocked) {
                 callPermissionSettings()
             } else {
-                requestPermissions(permission, OptiConstant.VIDEO_MERGE_1)
+                requestPermissions(permission, Constant.VIDEO_MERGE_1)
             }
         } else {
             captureVideoSnapshot()
@@ -715,8 +714,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     }
 
 
-    override fun videoOption(option: String) {
-    }
+
 
     override fun onProgress(progress: String) {
 //        Toast.makeText(mContext, "onProgress()", Toast.LENGTH_LONG).show()
@@ -881,7 +879,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 if (masterVideoFile != null) {
 
                     outputFile = createSaveVideoFile()
-                    OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                    CommonMethods.copyFile(masterVideoFile, outputFile)
                     Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
                         .show()
                     OptiUtils.refreshGallery(outputFile!!.absolutePath, requireContext())

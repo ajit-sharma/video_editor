@@ -30,11 +30,6 @@
             </intent-filter>
         </activity>
 
-        <activity
-            android:name="com.mobilehelp.videoeditor.OptiTrimmerActivity"
-            android:configChanges="orientation|keyboardHidden"
-            android:screenOrientation="locked" />
-
 
         <!--FileProvider-->
         <provider
