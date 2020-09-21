@@ -31,7 +31,6 @@ import com.mobilehelp.videoeditor.OptiVideoEditor
 import com.mobilehelp.videoeditor.R
 import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
 import com.mobilehelp.videoeditor.interfaces.OptiFFMpegCallback
-import com.mobilehelp.videoeditor.interfaces.OptiVideoOptionListener
 import com.mobilehelp.videoeditor.utils.*
 import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraView
@@ -45,7 +44,7 @@ import java.lang.ref.WeakReference
 import java.text.SimpleDateFormat
 import java.util.*
 
-class SingleFragment : BaseFragment(), OptiVideoOptionListener,
+class SingleFragment : BaseFragment(),
     OptiFFMpegCallback, View.OnTouchListener, BaseFragment.CallBacks {
 
     private var tagName: String = SingleFragment::class.java.simpleName
@@ -165,11 +164,8 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                     showPreview(
                         file,
                         videoUri,
-                        videoFileTwo,
                         _xDeltaTemp,
-                        _yDeltaTemp,
-                        location[0],
-                        location[1]
+                        _yDeltaTemp
                     )
                     doStoreVideo()
 
@@ -203,11 +199,8 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     private fun showPreview(
         result: VideoResult,
         videoUri: Uri?,
-        videoFileTwo: File?,
         _xDeltaTemp: Float,
         _yDeltaTemp: Float,
-        x: Int,
-        y: Int
     ) {
 
         viewSwitcher.showNext()
@@ -714,10 +707,6 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
         }
     }
 
-
-    override fun videoOption(option: String) {
-    }
-
     override fun onProgress(progress: String) {
 //        Toast.makeText(mContext, "onProgress()", Toast.LENGTH_LONG).show()
     }
@@ -746,7 +735,6 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 MotionEvent.ACTION_DOWN -> {
                     _xDelta = v.x - event.rawX
                     _yDelta = v.y - event.rawY
-                    Log.e("ACTION_DOWN$_xDelta", "=====$_yDelta")
 
                 }
                 MotionEvent.ACTION_MOVE -> {
@@ -758,21 +746,8 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
                     _xDeltaTemp = event.rawX + _xDelta
                     _yDeltaTemp = event.rawY + _yDelta
-                    Log.e(
-                        "ACTION_MOVE", "ACTION_MOVE" + event.rawX + _xDelta +
-                                "=====" + event.rawY + _yDelta
-                    )
-
-
 
                     v.getLocationOnScreen(location)
-//                    textView.getLocationOnScreen(location);
-
-                    Log.e(
-                        "ACTION_MOVE",
-                        "ACTION_MOVE" + "--" + "X axis is " + location[0] + "----" + "and Y axis is " + location[1]
-                    )
-
                 }
 
                 else -> return false
