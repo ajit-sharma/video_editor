@@ -224,7 +224,6 @@ class SingleFragment : BaseFragment(),
             .setDuration(0)
             .start()
 
-        Log.e("OptiVideo", "PreviewFragment" + "-------" + _xDelta + "-----" + _yDelta)
 
         videoView!!.setOnPreparedListener { mp ->
             val lp = videoView!!.layoutParams
