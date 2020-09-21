@@ -123,9 +123,7 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         rvVideoOptions.layoutManager = linearLayoutManager
 
         mContext = context
-        Temp.newInstance().apply {
-            setHelper(this@OptiMasterProcessorFragment)
-        }.show(requireFragmentManager(), "Temp")
+
 
         //add video editing options
         //videoOptions.add(OptiConstant.FLIRT)
@@ -183,11 +181,6 @@ class OptiMasterProcessorFragment : Fragment(), OptiBaseCreatorDialogFragment.Ca
         }
 
 
-        ibSelectVideo?.setOnClickListener {
-            Temp.newInstance().apply {
-                setHelper(this@OptiMasterProcessorFragment)
-            }.show(parentFragmentManager, "Temp")
-        }
 
 
 

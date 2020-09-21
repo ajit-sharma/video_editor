@@ -12,6 +12,7 @@ import android.net.Uri
 import android.os.Build
 import android.os.Bundle
 import android.os.Environment
+import android.os.Handler
 import android.provider.MediaStore
 import android.provider.Settings
 import android.util.Log
@@ -36,6 +37,8 @@ import com.otaliastudios.cameraview.CameraListener
 import com.otaliastudios.cameraview.CameraView
 import com.otaliastudios.cameraview.PictureResult
 import com.otaliastudios.cameraview.VideoResult
+import com.otaliastudios.cameraview.controls.Facing
+import kotlinx.android.synthetic.main.view_switcher_camera_view.*
 import org.jetbrains.anko.support.v4.longToast
 import java.io.File
 import java.lang.ref.WeakReference
@@ -94,6 +97,8 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
     private var exoPlayer: SimpleExoPlayer? = null
     private var playWhenReady: Boolean? = false
     private var outputFile: File? = null
+    private var mHandler: Handler? = null
+    private val mInterval = 5000L
 
 
     override fun onCreateView(
@@ -132,6 +137,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
         imgCancel = rootView!!.findViewById(R.id.cancel_video)
         imgSave = rootView!!.findViewById(R.id.save_video)
         imgShare = rootView!!.findViewById(R.id.share_video)
+        mHandler = Handler()
 
 
 
@@ -139,8 +145,10 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
         preferences =
             requireActivity().getSharedPreferences("fetch_permission", Context.MODE_PRIVATE)
 
+        viewSwitcher = rootView?.findViewById(R.id.view_switcher)!!
         camera = rootView.findViewById(R.id.camera)
         camera!!.setLifecycleOwner(this)
+
 
         camera!!.videoMaxDuration = 120 * 1000 // max 2mins
 
@@ -148,6 +156,7 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
             override fun onPictureTaken(result: PictureResult) {
 
             }
+
 
             override fun onVideoTaken(result: VideoResult) {
                 super.onVideoTaken(result)
@@ -188,6 +197,15 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 //                }
 
         })
+
+        fabFront!!.setOnClickListener {
+
+            if (camera!!.isTakingPicture || camera!!.isTakingVideo) return@setOnClickListener
+            when (camera!!.toggleFacing()) {
+                Facing.BACK -> fabFront!!.setImageResource(R.drawable.ic_camera_front_black_24dp)
+                Facing.FRONT -> fabFront!!.setImageResource(R.drawable.ic_camera_rear_black_24dp)
+            }
+        }
 
 
         fabVideo!!.setOnClickListener {
@@ -296,7 +314,10 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 overlayVideo.stop()
                 overlayVideo.visibility = View.GONE
                 videoView!!.stopPlayback()
-                camera!!.onFinishTemporaryDetach()
+                CameraView(mContext!!)
+                viewSwitcher.reset()
+                reInitView()
+
             } else {
 
                 stopRunningProcess()
@@ -306,9 +327,13 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 overlayVideo.stop()
                 overlayVideo.visibility = View.GONE
                 videoView!!.stopPlayback()
+                CameraView(mContext!!)
+                viewSwitcher.reset()
+                reInitView()
 
             }
         }
+
 
 
         imgShare!!.setOnClickListener {
@@ -330,6 +355,13 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
             }
         }
+    }
+
+    private fun reInitView() {
+        viewSwitcher = rootView?.findViewById(R.id.view_switcher)!!
+        camera_view_layout.visibility = View.VISIBLE
+        camera = rootView.findViewById(R.id.camera)
+        camera!!.setLifecycleOwner(this)
     }
 
 
@@ -390,7 +422,6 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
 
         } else {
 
-
             if (masterVideoFile != null) {
 
                 val outputFile = createSaveVideoFile()
@@ -401,7 +432,9 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 onComplete("Saved Successfully...", true)
             } else {
 
+//                startRepeatingTask()
                 showInProgressToast("Video In Process....")
+
             }
 
         }
@@ -880,6 +913,41 @@ class SingleFragment : BaseFragment(), OptiVideoOptionListener,
                 // Paused by app.
             }
         }
+    }
+
+    var mStatusChecker: Runnable = object : Runnable {
+        override fun run() {
+            try {
+                if (masterVideoFile != null) {
+
+                    val outputFile = createSaveVideoFile()
+                    OptiCommonMethods.copyFile(masterVideoFile, outputFile)
+                    Toast.makeText(context, R.string.successfully_saved, Toast.LENGTH_SHORT)
+                        .show()
+                    OptiUtils.refreshGallery(outputFile.absolutePath, requireContext())
+                    onComplete("Saved Successfully...", true)
+                    stopRepeatingTask()
+                }
+                //this function can change value of mInterval.
+            } finally {
+                // 100% guarantee that this always happens, even if
+                // your update method throws an exception
+                mHandler!!.postDelayed(this, mInterval)
+            }
+        }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        reInitView()
+    }
+
+    fun startRepeatingTask() {
+        mStatusChecker.run()
+    }
+
+    fun stopRepeatingTask() {
+        mHandler!!.removeCallbacks(mStatusChecker)
     }
 
 
