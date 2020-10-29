@@ -27,8 +27,8 @@ import com.google.android.exoplayer2.trackselection.DefaultTrackSelector
 import com.google.android.exoplayer2.trackselection.TrackSelectionArray
 import com.google.android.exoplayer2.ui.PlayerView
 import com.google.android.material.floatingactionbutton.FloatingActionButton
-import com.mobilehelp.videoeditor.VideoEditor
 import com.mobilehelp.videoeditor.R
+import com.mobilehelp.videoeditor.VideoEditor
 import com.mobilehelp.videoeditor.alphaVideo.AlphaMovieView
 import com.mobilehelp.videoeditor.interfaces.FFMpegCallback
 import com.mobilehelp.videoeditor.utils.*
@@ -712,8 +712,6 @@ class SingleFragment : BaseFragment(),
             captureVideoSnapshot()
         }
     }
-
-
 
 
     override fun onProgress(progress: String) {
